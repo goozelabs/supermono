@@ -27,7 +27,7 @@ for t in btn ptp; do
              s/\@media \(prefers-color-scheme: light\) \{\n(.*?)\n\}\n/$1\n/s' \
     dist/$t.src.css > dist/$t-light.src.css
   for v in $t $t-dark $t-light; do
-    npx --yes lightningcss-cli@1.33.0 --minify --targets 'chrome 123, safari 17.5' \
+    npx --yes lightningcss-cli@1.33.0 --minify --targets 'chrome 123, safari 17.5, ios_saf 17.5' \
       "dist/$v.src.css" -o "dist/$v.css"
     printf '%s: min %s bytes, gzip %s bytes\n' "$v" \
       "$(wc -c < "dist/$v.css" | tr -d ' ')" \

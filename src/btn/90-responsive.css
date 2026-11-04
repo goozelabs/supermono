@@ -6,6 +6,9 @@
    (a phone; tablets lay out at ~1600px and keep the desktop layout, zoomed). */
 @media (pointer: coarse) {
   html { zoom: 2; }
+  /* iOS Safari sizes text as text-size-adjust / zoom, so the adjust must match the zoom:
+     100% renders text at 1/zoom, `auto` autosizes it unevenly. Feature query = iOS only. */
+  @supports (-webkit-touch-callout: none) { html { -webkit-text-size-adjust: 200%; } }
   button, .button, input[type=submit], input[type=button],
   input:not([type=checkbox], [type=radio], [type=hidden], [type=image], [type=file]), select { min-height: 28px; }
   /* no iOS focus-zoom; also beats the bbcode textarea and vader's `.ui-widget input` */
@@ -170,7 +173,11 @@
 
   /* Download: a glyph button top-right. Report: an icon chip at the stats line's right end,
      away from Download. The site's icons (browse) and "[DL]" text (series) are hidden. */
-  .torrent_table tr:is(.torrent, .group_torrent) > td > span:has(> a[title=Download]) { float: right; margin: 0 0 4px 10px; font-size: 0; }
+  /* Download is absolute (top: auto keeps it on the first text line), so a one-line format
+     line no longer gets a gap under it; the cell keeps 48px clear for it. */
+  .torrent_table tr:is(.torrent, .group_torrent) > td > span:has(> a[title=Download]) { font-size: 0; }
+  .torrent_table tr:is(.torrent, .group_torrent) a[title=Download] { position: absolute; right: 12px; }
+  .torrent_table tr.torrent > td:nth-child(3), .torrent_table tr.group_torrent > td:not(.group, .number) { padding-right: 48px; }
   .torrent_table tr:is(.torrent, .group_torrent) a:is([title=Download], [title=Report]) { display: flex; align-items: center; justify-content: center; font-size: 0; }
   .torrent_table tr:is(.torrent, .group_torrent) a:is([title=Download], [title=Report]) > img { display: none; }
   .torrent_table tr:is(.torrent, .group_torrent) a[title=Download] {

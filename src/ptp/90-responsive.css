@@ -4,19 +4,42 @@
    widely supported, and unlike the viewport it does not change when the keyboard opens).
    There, zoom brings text back to size and the narrow layout applies. Media queries ignore
    zoom, so narrow rules are written as: a narrow window with a mouse, OR a phone.
-   In portrait the zoom is 980 / screen width, so 1 CSS px is one screen point, the same
-   scale BTN gets from its viewport; CSS can't divide by the width, so it steps by common
-   iPhone widths (iOS reports the portrait width in either orientation). Landscape keeps 2. */
+   In portrait the zoom is 980 / screen width, rounded up, so 1 CSS px is one screen point,
+   the same scale BTN gets from its viewport; CSS can't divide by the width, so it steps by
+   iPhone widths (iOS reports the portrait width in either orientation). Landscape keeps 2.
+   --z carries the zoom for the form-field rule below. */
 @media (pointer: coarse) and (max-device-width: 600px) {
-  html { zoom: 2; }
-  button, input[type=submit], input[type=button],
-  input:not([type=checkbox], [type=radio], [type=hidden], [type=image], [type=file]), select { min-height: 28px; }
-  input, select, textarea { font-size: 16px; } /* no iOS focus-zoom */
+  html { zoom: 2; --z: 2; }
+  /* iOS Safari sizes text as text-size-adjust / zoom, so the adjust must match the zoom:
+     100% renders text at 1/zoom, `auto` autosizes it unevenly. Feature query = iOS only. */
+  @supports (-webkit-touch-callout: none) { html { -webkit-text-size-adjust: 200%; } }
+  button, input[type=submit], input[type=button] { min-height: 28px; }
+  /* iOS zooms into a focused field unless font-size x page scale >= 16, and it ignores CSS
+     zoom; PTP's page scale is about 1/zoom. So fields get font-size 16px x zoom and their own
+     zoom of 1/zoom: they still render at 16pt but pass the check. With an effective zoom of
+     1, their px box metrics are scaled by --z to keep their usual size. Zoom steps are
+     rounded up so 16 x zoom x scale never lands just under 16. */
+  input:not([type=checkbox], [type=radio], [type=submit], [type=button], [type=reset], [type=image], [type=file], [type=range], [type=color], [type=hidden]),
+  select, textarea {
+    zoom: calc(1 / var(--z)); font-size: calc(16px * var(--z));
+    padding: calc(4px * var(--z)) calc(8px * var(--z)); min-height: calc(28px * var(--z));
+    border-width: calc(1px * var(--z)); border-radius: calc(4px * var(--z));
+  }
+  select:not([multiple]) {
+    padding-right: calc(28px * var(--z));
+    background-position: right calc(15px * var(--z)) center, right calc(10px * var(--z)) center;
+    background-size: calc(5px * var(--z)) calc(5px * var(--z));
+  }
 }
-@media (pointer: coarse) and (orientation: portrait) and (max-device-width: 384px) { html { zoom: 2.6; } }  /* 375 */
-@media (pointer: coarse) and (orientation: portrait) and (min-device-width: 385px) and (max-device-width: 397px) { html { zoom: 2.5; } }  /* 390, 393 */
-@media (pointer: coarse) and (orientation: portrait) and (min-device-width: 398px) and (max-device-width: 420px) { html { zoom: 2.4; } }  /* 402, 414 */
-@media (pointer: coarse) and (orientation: portrait) and (min-device-width: 421px) and (max-device-width: 600px) { html { zoom: 2.25; } }  /* 428, 430, 440 */
+@media (pointer: coarse) and (orientation: portrait) and (max-device-width: 340px) { html { zoom: 3.07; --z: 3.07; } @supports (-webkit-touch-callout: none) { html { -webkit-text-size-adjust: 307%; } } }  /* 320 */
+@media (pointer: coarse) and (orientation: portrait) and (min-device-width: 341px) and (max-device-width: 375px) { html { zoom: 2.62; --z: 2.62; } @supports (-webkit-touch-callout: none) { html { -webkit-text-size-adjust: 262%; } } }  /* 375 */
+@media (pointer: coarse) and (orientation: portrait) and (min-device-width: 376px) and (max-device-width: 390px) { html { zoom: 2.52; --z: 2.52; } @supports (-webkit-touch-callout: none) { html { -webkit-text-size-adjust: 252%; } } }  /* 390 */
+@media (pointer: coarse) and (orientation: portrait) and (min-device-width: 391px) and (max-device-width: 393px) { html { zoom: 2.5; --z: 2.5; } @supports (-webkit-touch-callout: none) { html { -webkit-text-size-adjust: 250%; } } }  /* 393 */
+@media (pointer: coarse) and (orientation: portrait) and (min-device-width: 394px) and (max-device-width: 402px) { html { zoom: 2.44; --z: 2.44; } @supports (-webkit-touch-callout: none) { html { -webkit-text-size-adjust: 244%; } } }  /* 402 */
+@media (pointer: coarse) and (orientation: portrait) and (min-device-width: 403px) and (max-device-width: 414px) { html { zoom: 2.37; --z: 2.37; } @supports (-webkit-touch-callout: none) { html { -webkit-text-size-adjust: 237%; } } }  /* 414 */
+@media (pointer: coarse) and (orientation: portrait) and (min-device-width: 415px) and (max-device-width: 428px) { html { zoom: 2.29; --z: 2.29; } @supports (-webkit-touch-callout: none) { html { -webkit-text-size-adjust: 229%; } } }  /* 428 */
+@media (pointer: coarse) and (orientation: portrait) and (min-device-width: 429px) and (max-device-width: 430px) { html { zoom: 2.28; --z: 2.28; } @supports (-webkit-touch-callout: none) { html { -webkit-text-size-adjust: 228%; } } }  /* 430 */
+@media (pointer: coarse) and (orientation: portrait) and (min-device-width: 431px) and (max-device-width: 600px) { html { zoom: 2.23; --z: 2.23; } @supports (-webkit-touch-callout: none) { html { -webkit-text-size-adjust: 223%; } } }  /* 440 */
 
 @media (max-width: 760px) and (pointer: fine), (pointer: coarse) and (max-device-width: 600px) {
   /* Header, matching BTN's: stats strip on top with the Bonus link (its total) pinned at
@@ -143,7 +166,9 @@
 
   /* Edition rows ("Feature Film - High Definition") */
   :is(.basic-movie-list, .movie-page__torrent-table) > tbody > tr:not(.hidden):has(> .basic-movie-list__torrent-edition) { padding: 0; }
-  :is(.basic-movie-list, .movie-page__torrent-table) > tbody > tr:not(.hidden) > td.basic-movie-list__torrent-edition { flex: 1; padding: 5px 12px; }
+  :is(.basic-movie-list, .movie-page__torrent-table) > tbody > tr:not(.hidden) > td.basic-movie-list__torrent-edition { flex: 1; padding: 5px 12px; font-size: var(--fs); color: var(--fg-muted); }
+  .basic-movie-list__torrent-edition__main { font-weight: 600; }
+  .basic-movie-list__torrent-edition__sub { font-weight: 400; }
 
   /* Movie row: cover pinned left; everything else flows beside it */
   .basic-movie-list > tbody > tr.basic-movie-list__details-row:not(.hidden) { min-height: 80px; padding-left: 62px; }
@@ -158,24 +183,30 @@
 
   /* Stats line: size, snatched, seeders, leechers, then time (list view). `content: x / alt`
      keeps the glyphs out of screen readers. */
-  :is(.basic-movie-list__details-row, .basic-movie-list__torrent-row, .group_torrent_header) > td:nth-last-child(-n+4),
+  :is(.basic-movie-list__details-row, .basic-movie-list__torrent-row, .group_torrent_header) > td:not(.basic-movie-list__torrent-edition):nth-last-child(-n+4),
   .basic-movie-list tr > td.nobr:nth-last-child(5) {
     flex: 0 0 max-content; /* the site sets inline cell widths */
     margin-top: 6px; font-size: var(--fs-sm); color: var(--fg-muted);
     white-space: nowrap; text-align: left; font-variant-numeric: tabular-nums;
   }
   .basic-movie-list tr > td.nobr:nth-last-child(5) { order: 1; }
-  :is(.basic-movie-list__details-row, .basic-movie-list__torrent-row, .group_torrent_header) > td:nth-last-child(4) { color: var(--fg); font-weight: 600; }
-  :is(.basic-movie-list__details-row, .basic-movie-list__torrent-row, .group_torrent_header) > td:nth-last-child(3)::before { content: "✓\00a0" / "Snatched "; }
-  :is(.basic-movie-list__details-row, .basic-movie-list__torrent-row, .group_torrent_header) > td:nth-last-child(2) { color: var(--good); }
-  :is(.basic-movie-list__details-row, .basic-movie-list__torrent-row, .group_torrent_header) > td.no-seeders { color: var(--bad); }
-  :is(.basic-movie-list__details-row, .basic-movie-list__torrent-row, .group_torrent_header) > td:nth-last-child(2)::before { content: "▲\00a0" / "Seeders "; }
-  :is(.basic-movie-list__details-row, .basic-movie-list__torrent-row, .group_torrent_header) > td:nth-last-child(1) { color: var(--warn); }
-  :is(.basic-movie-list__details-row, .basic-movie-list__torrent-row, .group_torrent_header) > td:nth-last-child(1)::before { content: "▼\00a0" / "Leechers "; }
+  :is(.basic-movie-list__details-row, .basic-movie-list__torrent-row, .group_torrent_header) > td:not(.basic-movie-list__torrent-edition):nth-last-child(4) { color: var(--fg); font-weight: 600; }
+  :is(.basic-movie-list__details-row, .basic-movie-list__torrent-row, .group_torrent_header) > td:not(.basic-movie-list__torrent-edition):nth-last-child(3)::before { content: "✓\00a0" / "Snatched "; }
+  :is(.basic-movie-list__details-row, .basic-movie-list__torrent-row, .group_torrent_header) > td:not(.basic-movie-list__torrent-edition):nth-last-child(2) { color: var(--good); }
+  :is(.basic-movie-list__details-row, .basic-movie-list__torrent-row, .group_torrent_header) > td.no-seeders:not(.basic-movie-list__torrent-edition) { color: var(--bad); }
+  :is(.basic-movie-list__details-row, .basic-movie-list__torrent-row, .group_torrent_header) > td:not(.basic-movie-list__torrent-edition):nth-last-child(2)::before { content: "▲\00a0" / "Seeders "; }
+  :is(.basic-movie-list__details-row, .basic-movie-list__torrent-row, .group_torrent_header) > td:not(.basic-movie-list__torrent-edition):nth-last-child(1) { color: var(--warn); }
+  :is(.basic-movie-list__details-row, .basic-movie-list__torrent-row, .group_torrent_header) > td:not(.basic-movie-list__torrent-edition):nth-last-child(1)::before { content: "▼\00a0" / "Leechers "; }
 
   /* Download: a glyph button top-right. Report / Permalink / Bookmark: icon chips at the
      stats line's right end, away from Download. Bracket and pipe text is hidden. */
-  .basic-movie-list__torrent__action { float: right; margin: 0 0 4px 10px; font-size: 0; }
+  /* Download is absolute, so a one-line release
+     no longer gets a gap under it; the cell keeps 48px clear for it. Report/Permalink pin to
+     the row's bottom-right, so rows that have them are at least tall enough for both. */
+  .basic-movie-list__torrent__action { margin: 0; font-size: 0; }
+  :is(.basic-movie-list, .movie-page__torrent-table) a[title=Download] { position: absolute; top: 10px; right: 12px; } /* these rows hold no sub-header */
+  :is(.basic-movie-list__torrent-row, .group_torrent_header) > td:first-child:not(.basic-movie-list__torrent-edition) { padding-right: 48px; }
+  .group_torrent_header:has(a[title=Report]) > td:first-child { min-height: 40px; }
   :is(.basic-movie-list, .movie-page__torrent-table) a:is([title=Download], [title=Report], [title=Permalink]),
   .basic-movie-list__movie__bookmark > a { display: flex; align-items: center; justify-content: center; font-size: 0; }
   :is(.basic-movie-list, .movie-page__torrent-table) a:is([title=Download], [title=Report], [title=Permalink]) > img { display: none; }
@@ -200,7 +231,9 @@
   :is(.basic-movie-list, .movie-page__torrent-table) a[title=Permalink]::before { content: "" / "Permalink"; }
   .basic-movie-list__movie__bookmark > a { --i: var(--icon-bookmark); }
   .basic-movie-list__movie__bookmark > a::before { content: "" / "Bookmark"; }
-  :is(.basic-movie-list, .movie-page__torrent-table) tr:has(a[title=Report], .basic-movie-list__movie__bookmark)::after {
+  .basic-movie-list__movie__bookmark > a { top: 10px; bottom: auto; } /* movie rows have no Download: same corner */
+  .basic-movie-list > tbody > tr.basic-movie-list__details-row:not(.hidden) > td:nth-child(2) { padding-right: 40px; } /* beats the cell reset */
+  :is(.basic-movie-list, .movie-page__torrent-table) tr:has(a[title=Report])::after {
     content: ""; order: 2; width: 30px; height: 30px; margin: 6px 0 0 auto;
   }
   :is(.basic-movie-list, .movie-page__torrent-table) tr:has(a[title=Permalink])::after { width: 68px; }
