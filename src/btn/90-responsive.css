@@ -109,6 +109,49 @@
   .thin:has(> .main_column) { grid-template-columns: minmax(0, 1fr); }
   .thin:has(> .main_column) > .sidebar { grid-column: 1; }
   .filter_torrents { max-width: none; }
+  /* Torrent filter: labels above their fields in one column (the label column pushed fields
+     off the box), tag groups as collapsible rows of chips, Episode/Season and the country
+     list as wrapping rows, and a footer of count, then Filter (primary) and Reset.
+     Rows keep `.hide` (global.css collapses tag rows with it). */
+  .filter_torrents .box.pad { overflow-x: visible; }
+  .filter_torrents .box > table:not(.cat_list), .filter_torrents .box > table:not(.cat_list) > tbody { display: block; }
+  .filter_torrents .box > table:not(.cat_list) > tbody > tr:not(.hide) { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; padding: 4px 0; }
+  .filter_torrents .box > table:not(.cat_list) > tbody > tr > td { display: block; width: auto; padding: 0; border: 0; text-align: left; }
+  .filter_torrents .box > table:not(.cat_list) > tbody > tr > td.label { flex: 1 1 100%; }
+  .filter_torrents .box > table:not(.cat_list) > tbody > tr > td:not(.label) { flex: 1 1 100%; min-width: 0; }
+  /* "Hide Tags" sits at the end of the Any/All line instead of on its own line */
+  .filter_torrents .box > table:not(.cat_list) > tbody > tr:has(#tags_toggle) { position: relative; }
+  .filter_torrents .box > table:not(.cat_list) > tbody > tr > td:has(> #tags_toggle) { position: absolute; right: 0; bottom: 6px; }
+  .filter_torrents :is(#searchstr, #tags) { width: 100%; }
+  /* !important: the site sets inline `width:auto` on these */
+  .filter_torrents td > select { width: calc(50% - 4px) !important; }
+  .filter_torrents td > select#foreign_selection { width: 100% !important; }
+  /* Tags as chips sized to their label (each also holds its +/- links), several per row */
+  body .filter_torrents .tag_container { display: flex; flex-wrap: wrap; gap: 6px; }
+  body .filter_torrents .tag_container > div { min-height: 32px; padding: 0 2px; font-size: var(--fs-sm); line-height: 1.2; }
+  /* On touch, each tag group is just its heading (plus tags you selected or excluded) until
+     tapped; tapping another group closes it. Same first-tap :hover reveal as the ☰ menu. */
+  @media (pointer: coarse) {
+    /* each heading is a full-width bar so it reads as a control; accent when open */
+    .filter_torrents .box > table:not(.cat_list) > tbody > tr.tag_row > td.label { /* beats the cell reset above */
+      display: flex; align-items: center; min-height: 40px; padding: 0 12px; cursor: pointer;
+      font-style: normal; font-weight: 600; color: var(--fg);
+      background: var(--bg-raised); border: 1px solid var(--line-strong); border-radius: var(--radius);
+    }
+    .filter_torrents tr.tag_row > td.label::after { content: "▾"; margin-left: auto; color: var(--fg-muted); }
+    .filter_torrents .box > table:not(.cat_list) > tbody > tr.tag_row:is(:hover, :focus-within) > td.label { border-color: var(--accent); color: var(--accent); }
+    .filter_torrents tr.tag_row:is(:hover, :focus-within) > td.label::after { content: "▴"; color: var(--accent); }
+    .filter_torrents .box > table:not(.cat_list) > tbody > tr.tag_row:is(:hover, :focus-within) > td:not(.label) { padding-top: 4px; }
+    .filter_torrents tr.tag_row:not(:hover, :focus-within) .tag_container > div:not(.selected, .negated) { display: none; }
+  }
+  .filter_torrents table.cat_list, .filter_torrents table.cat_list > tbody, .filter_torrents table.cat_list tr { display: flex; flex-wrap: wrap; gap: 4px 16px; }
+  .filter_torrents table.cat_list td { display: flex; align-items: center; gap: 6px; padding: 4px 0; }
+  .filter_torrents .country_list table > tbody { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px 12px; }
+  .filter_torrents .country_list table tr { display: contents; }
+  .filter_torrents .country_list table td { padding: 2px 0; }
+  .filter_torrents .submit { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; text-align: left; }
+  .filter_torrents .submit > span { flex: 1 1 100%; color: var(--fg-muted); }
+  .filter_torrents .submit > input[type=submit] { flex: 1 1 auto; background: var(--accent); border-color: var(--accent); color: var(--accent-fg); font-weight: 600; }
   td.avatar { width: 90px; }
 }
 

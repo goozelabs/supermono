@@ -131,6 +131,28 @@
   [class*="grid-offset-u-"] { margin-left: 0; }
   .form--horizontal .grid__item:has(> .form__label:only-child) { text-align: left; padding-bottom: 0; }
 
+  /* Torrent filter (basic and advanced), matching BTN's: short fields and dropdowns two
+     across, categories in two columns, the tag list as wrapping chips, and a footer of
+     count, extra dropdowns, then Filter (primary) and Reset. */
+  .search-form .grid__item > .grid > .grid__item[class*="grid-u-"] { width: 50%; }
+  .search-form .grid__item.nobr { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; white-space: normal; }
+  .search-form .grid__item.nobr > * { width: 100%; margin: 0; }
+  .search-form .grid__item.nobr > .grid-u-1 { grid-column: 1 / -1; }
+  .search-form .grid__item:has(> select + select) { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+  .search-form .grid__item:has(> select + select) > select { flex: 1 1 40%; min-width: 0; margin: 0; }
+  /* advanced: "Order by:" text plus two dropdowns share one row */
+  .search-form .grid__item:has(> select + select):not(:has(> select + select + select)) > select { flex-basis: 0; }
+  .search-form .list--inline-full-width { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 12px; }
+  #taglist table, #taglist tbody { display: flex; flex-wrap: wrap; gap: 6px; }
+  #taglist tr { display: contents; }
+  #taglist td { display: block; padding: 0; border: 0; }
+  #taglist td a { display: inline-block; padding: 4px 8px; border: 1px solid var(--line); border-radius: var(--radius-sm); }
+  .search-form__footer { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; text-align: left; }
+  .search-form__footer__results { flex: 1 1 100%; color: var(--fg-muted); }
+  .search-form__footer__buttons { display: flex; flex-wrap: wrap; flex: 1 1 100%; gap: 8px; }
+  .search-form__footer__buttons > select { flex: 1 1 40%; min-width: 0; }
+  .search-form__footer__buttons > input[type=submit] { flex: 1 1 auto; background: var(--accent); border-color: var(--accent); color: var(--accent-fg); font-weight: 600; }
+
   .forum-post__avatar { flex-basis: 90px; }
   .cover-movie-list { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
   #top10 .cover-movie-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
