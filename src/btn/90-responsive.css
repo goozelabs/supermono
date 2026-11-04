@@ -30,7 +30,8 @@
      line (size, snatched, seeders, leechers) with Report at its right end. Series rows: the
      episode cell becomes a sub-header; each torrent is format line + stats line. Rows are
      flex, so `.hide`/inline display from the site's toggles must still win (`:not(.hide)`). */
-  .torrent_table:has(tr.torrent, tr.group_torrent), .torrent_table:has(tr.torrent, tr.group_torrent) > tbody { display: block; }
+  .torrent_table:has(tr.torrent, tr.group_torrent):not(.hide),
+  .torrent_table:has(tr.torrent, tr.group_torrent) > tbody:not(.hide) { display: block; }
   .torrent_table > tbody > tr:is(.torrent, .group_torrent, .colhead, .colhead_dark):not(.hide) {
     display: flex; flex-wrap: wrap; align-items: center; column-gap: 12px;
     position: relative; padding: 10px 12px; border-top: 1px solid var(--line);
