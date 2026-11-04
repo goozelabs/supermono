@@ -14,27 +14,29 @@
 .main-menu { grid-area: menu; }
 .search-bar { grid-area: search; }
 
-/* Top strip: stats top-left; minor links top-right, account and major links below them */
+/* Top strip: stats top-left, minor links top-right; account and major links on a second
+   row, right-justified. ::after is a full-width flex item that forces the row break. */
 #userinfo {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
-  grid-template-areas: "stats minor minor" ". username major";
-  align-items: start;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
   gap: 4px 16px;
   padding: 4px 0;
   font-size: var(--fs-sm);
   color: var(--fg-muted);
 }
+#userinfo::after { content: ""; order: 3; flex-basis: 100%; height: 0; }
 #userinfo ul { display: flex; flex-wrap: wrap; gap: 2px 12px; margin: 0; padding: 0; list-style: none; }
 #userinfo li { margin: 0; }
 #userinfo a { color: var(--fg); }
 #userinfo a:hover { color: var(--accent-hover); }
 #userinfo .user-info-bar__text { color: var(--fg); }
-#userinfo_stats { grid-area: stats; }
-#userinfo_minor { grid-area: minor; justify-content: flex-end; }
-#userinfo_username { grid-area: username; justify-self: end; font-weight: 600; }
+#userinfo > #userinfo_stats { order: 1; }
+/* `#userinfo >` so the auto margins beat `#userinfo ul { margin: 0 }` */
+#userinfo > #userinfo_minor { order: 2; margin-left: auto; justify-content: flex-end; }
+#userinfo > #userinfo_username { order: 4; margin-left: auto; font-weight: 600; }
 #nav_userinfo a { font-weight: 900; }
-#userinfo_major { grid-area: major; font-weight: 600; }
+#userinfo > #userinfo_major { order: 5; font-weight: 600; }
 #userinfo .user-info-bar__link--donations-behind { color: var(--warn); }
 
 /* "More" drop-down in the minor list */
