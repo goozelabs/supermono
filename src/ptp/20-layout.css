@@ -108,6 +108,8 @@
 
 /* Content: page body, optionally with a sidebar (first in source; shown on the right, as on BTN) */
 #content { margin: var(--gap) 0; min-width: 0; }
+/* Inline fixed widths (e.g. upload page blocks at 700px) never exceed the column */
+#content [style*="width"] { max-width: 100%; }
 .page__title { margin: 0 0 8px; }
 
 .thin:has(> .main-column) {

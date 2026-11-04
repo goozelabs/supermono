@@ -1,0 +1,39 @@
+/* Third-party widgets whose CSS went with PTP's theme: qTip2 (movie hover cards and
+   other tooltips, appended to <body>; its JS sets position and visibility inline) and
+   jQuery UI sliders. */
+
+.qtip {
+  position: absolute;
+  top: -30000px;
+  left: -30000px;
+  z-index: 15000;
+  max-width: 380px;
+  color: var(--fg);
+  font-size: var(--fs-sm);
+  line-height: 1.4;
+  background: var(--bg-raised);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-pop);
+  overflow: hidden;
+}
+.qtip-titlebar { padding: 6px 10px; background: var(--bg-head); border-bottom: 1px solid var(--line); font-weight: 600; }
+.qtip-content { padding: 8px 10px; overflow-wrap: anywhere; }
+.qtip-content img { max-width: 100%; }
+.qtip-tip { display: none; }
+
+.ui-slider { position: relative; height: 6px; margin: 8px 6px; background: var(--bg-sunken); border: 1px solid var(--line-strong); border-radius: 3px; }
+.ui-slider-range { position: absolute; top: 0; height: 100%; background: var(--accent); border-radius: 3px; }
+.ui-slider-handle {
+  position: absolute;
+  top: -6px;
+  z-index: 2;
+  width: 16px;
+  height: 16px;
+  margin-left: -8px;
+  background: var(--accent);
+  border: 2px solid var(--bg-raised);
+  border-radius: 50%;
+  cursor: pointer;
+}
+.ui-slider-handle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
