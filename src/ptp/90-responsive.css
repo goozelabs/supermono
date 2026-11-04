@@ -12,12 +12,86 @@
 }
 
 @media (max-width: 760px) and (pointer: fine), (pointer: coarse) and (max-device-width: 600px) {
-  /* Header: one item per row, logo after the user links */
-  #header > *, #userinfo > * { flex-basis: 100%; }
-  #userinfo::after { display: none; }
-  #userinfo > :is(#userinfo_minor, #userinfo_username) { margin-left: 0; justify-content: flex-start; }
-  .site-logo { order: 6; } /* after major (5); ties with the menu, which follows in source */
-  .search-bar__search-field { flex-basis: 110px; }
+  /* Header, matching BTN's: stats strip on top with the Bonus link (its total) pinned at
+     the end, account row (username, Edit, Logout | Upload, Invite, Donate as glyph buttons),
+     quick links as one line, then logo and a ☰ that opens the menu as a panel over the page,
+     then search. The stats and quick-link lines scroll sideways on their own. #userinfo and
+     #userinfo_major are display: contents, so each list item is a header flex item placed
+     by `order`. Panel and "More" open on :hover / :focus-within: iOS Safari shows what a
+     tap's :hover reveals and holds that tap's click. `cursor: pointer` makes .main-menu
+     (which draws the ☰) tappable on iOS. */
+  #header { position: relative; gap: 6px 8px; }
+  #userinfo > #userinfo_major { display: contents; }
+  #userinfo > :is(#userinfo_stats, #userinfo_minor) {
+    flex-wrap: nowrap; white-space: nowrap; overflow-x: auto; scrollbar-width: none;
+  }
+  :is(#userinfo_stats, #userinfo_minor)::-webkit-scrollbar { display: none; }
+  #userinfo > #userinfo_stats { order: 1; flex: 1 1 0; min-width: 0; align-self: center; gap: 0 14px;
+    padding-right: 24px; mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent); }
+  /* no fade on the quick links: a mask would also hide the "More" list hanging below them */
+  #nav_bonus { order: 2; font-weight: 400; white-space: nowrap; }
+  #userinfo::after { order: 3; border-bottom: 1px solid var(--line); }
+  #userinfo > #userinfo_username { order: 4; align-self: center; margin: 0; flex-wrap: nowrap; align-items: center; gap: 4px; }
+  #nav_upload, #nav_invite, #nav_donate { order: 5; }
+  #userinfo #nav_upload { margin-left: auto; padding-left: 8px; border-left: 1px solid var(--line); } /* beats `#userinfo li { margin: 0 }` */
+  #userinfo > #userinfo_minor { order: 6; flex: 1 1 100%; min-width: 0; margin: 0; justify-content: flex-start; gap: 0 14px; font-size: 12.5px; }
+  .site-logo { order: 7; }
+  .main-menu { order: 8; }
+  .search-bar { order: 9; }
+
+  /* Glyph buttons; the label stays in the link for screen readers */
+  :is(#nav_useredit, #nav_logout, #nav_upload, #nav_invite, #nav_donate) > a {
+    display: flex; align-items: center; justify-content: center; width: 34px; height: 32px; font-size: 0; /* flex: in a grid the hidden label text took a row and pushed the icon up */
+    border: 1px solid var(--line); border-radius: 7px; background: var(--bg-raised);
+  }
+  /* Icons are masks (--i, from 00-tokens.css): font glyphs sit off-centre, differently per font */
+  :is(#nav_useredit, #nav_logout, #nav_upload, #nav_invite, #nav_donate) > a::before { content: ""; width: 17px; height: 17px; background: currentColor; -webkit-mask: var(--i) center / contain no-repeat; mask: var(--i) center / contain no-repeat; }
+  #nav_userinfo a { font-size: 14px; }
+  #nav_useredit > a { --i: var(--icon-edit); }
+  #nav_useredit > a::before { content: "" / "Edit"; }
+  #nav_logout > a { --i: var(--icon-logout); color: var(--fg-muted); }
+  #nav_logout > a::before { content: "" / "Logout"; }
+  #nav_upload > a { --i: var(--icon-upload); }
+  #nav_upload > a::before { content: "" / "Upload"; }
+  #nav_invite > a { --i: var(--icon-invite); }
+  #nav_invite > a::before { content: "" / "Invite"; }
+  #nav_donate > a { --i: var(--icon-donate); }
+  #nav_donate > a::before { content: "" / "Donate"; }
+
+  /* "More": its list opens full width under the quick links. The opener is not positioned,
+     so the list's containing block is #header, outside the scrolling line, and is not cut off. */
+  .user-info-bar__item--drop-down-menu-opener { position: static; }
+  #userinfo .user-info-bar__drop-down-menu { top: auto; left: 0; right: 0; margin-top: 4px; white-space: normal; }
+  #userinfo .user-info-bar__item--drop-down-menu-opener:is(:hover, :focus-within) > .user-info-bar__drop-down-menu { display: flex; }
+
+  .site-logo__link { padding-left: 32px; background-size: 24px 24px; font-size: 18px; line-height: 26px; }
+
+  /* ☰ and the menu panel */
+  /* .main-menu is the button; its ::before is the ☰ icon filling it (mask centred at 20px).
+     The panel's static position is right after the ::before, i.e. under the button. */
+  .main-menu {
+    flex: none; width: 44px; height: 40px; margin: 0 0 0 auto; cursor: pointer; color: var(--fg);
+    border: 1px solid var(--line-strong); border-radius: 8px; background: var(--bg-raised);
+  }
+  .main-menu::before {
+    content: "" / "Menu"; display: block; height: 100%; background: currentColor;
+    -webkit-mask: var(--icon-menu) center / 20px 20px no-repeat; mask: var(--icon-menu) center / 20px 20px no-repeat;
+  }
+  .main-menu:is(:hover, :focus-within) { border-color: var(--accent); color: var(--accent); }
+  .main-menu__list { display: none; }
+  /* top: auto keeps the panel just under the ☰; left/right span the header */
+  .main-menu:is(:hover, :focus-within) > .main-menu__list {
+    display: block; position: absolute; left: 0; right: 0; z-index: 1000; margin-top: 6px; padding: 4px;
+    background: var(--bg-raised); border: 1px solid var(--line-strong); border-radius: 10px; box-shadow: var(--shadow-pop);
+  }
+  .main-menu__item + .main-menu__item { border-top: 1px solid var(--line); }
+  .main-menu__link { display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 6px; font-size: 15px; white-space: normal; }
+
+  /* Search: main (movies) full width, the rest three across; a field widens while in use */
+  .search-bar { flex-basis: 100%; }
+  .search-bar__list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .search-bar__search-field { min-width: 0; }
+  .search-bar__search-field:is(:first-child, :focus-within) { grid-column: 1 / -1; }
 
   .thin:has(> .main-column) { grid-template-columns: minmax(0, 1fr); }
   .thin:has(> .main-column) > .sidebar { grid-column: 1; }
@@ -96,23 +170,29 @@
      stats line's right end, away from Download. Bracket and pipe text is hidden. */
   .basic-movie-list__torrent__action { float: right; margin: 0 0 4px 10px; font-size: 0; }
   :is(.basic-movie-list, .movie-page__torrent-table) a:is([title=Download], [title=Report], [title=Permalink]),
-  .basic-movie-list__movie__bookmark > a { display: grid; place-items: center; font-size: 0; }
+  .basic-movie-list__movie__bookmark > a { display: flex; align-items: center; justify-content: center; font-size: 0; }
   :is(.basic-movie-list, .movie-page__torrent-table) a:is([title=Download], [title=Report], [title=Permalink]) > img { display: none; }
   :is(.basic-movie-list, .movie-page__torrent-table) a[title=Download] {
     width: 38px; height: 34px; border-radius: 7px; color: var(--accent);
     background: color-mix(in srgb, var(--accent) 10%, transparent);
     border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
   }
-  :is(.basic-movie-list, .movie-page__torrent-table) a[title=Download]::before { content: "↓" / "Download"; font: 700 16px/1 var(--font); }
+  :is(.basic-movie-list, .movie-page__torrent-table) a:is([title=Download], [title=Report], [title=Permalink])::before,
+  .basic-movie-list__movie__bookmark > a::before { content: ""; width: 16px; height: 16px; background: currentColor; -webkit-mask: var(--i) center / contain no-repeat; mask: var(--i) center / contain no-repeat; }
+  :is(.basic-movie-list, .movie-page__torrent-table) a[title=Download] { --i: var(--icon-download); }
+  :is(.basic-movie-list, .movie-page__torrent-table) a[title=Download]::before { content: "" / "Download"; width: 18px; height: 18px; }
   :is(.basic-movie-list, .movie-page__torrent-table) a:is([title=Report], [title=Permalink]),
   .basic-movie-list__movie__bookmark > a {
     position: absolute; right: 12px; bottom: 10px; width: 30px; height: 30px;
     border: 1px solid var(--line); border-radius: 6px; color: var(--fg-muted);
   }
   :is(.basic-movie-list, .movie-page__torrent-table) a[title=Report]:has(~ a[title=Permalink]) { right: 50px; }
-  :is(.basic-movie-list, .movie-page__torrent-table) a[title=Report]::before { content: "⚑" / "Report"; font-size: 14px; }
-  :is(.basic-movie-list, .movie-page__torrent-table) a[title=Permalink]::before { content: "#" / "Permalink"; font-size: 14px; }
-  .basic-movie-list__movie__bookmark > a::before { content: "☆" / "Bookmark"; font-size: 14px; }
+  :is(.basic-movie-list, .movie-page__torrent-table) a[title=Report] { --i: var(--icon-report); }
+  :is(.basic-movie-list, .movie-page__torrent-table) a[title=Report]::before { content: "" / "Report"; }
+  :is(.basic-movie-list, .movie-page__torrent-table) a[title=Permalink] { --i: var(--icon-permalink); }
+  :is(.basic-movie-list, .movie-page__torrent-table) a[title=Permalink]::before { content: "" / "Permalink"; }
+  .basic-movie-list__movie__bookmark > a { --i: var(--icon-bookmark); }
+  .basic-movie-list__movie__bookmark > a::before { content: "" / "Bookmark"; }
   :is(.basic-movie-list, .movie-page__torrent-table) tr:has(a[title=Report], .basic-movie-list__movie__bookmark)::after {
     content: ""; order: 2; width: 30px; height: 30px; margin: 6px 0 0 auto;
   }

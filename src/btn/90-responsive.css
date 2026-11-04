@@ -14,7 +14,95 @@
 }
 
 @media (max-width: 760px) and (pointer: fine), (pointer: coarse) and (max-width: 900px) {
-  #header { grid-template-columns: minmax(0, 1fr); grid-template-areas: "user" "logo" "don" "menu" "search" "alerts"; }
+  /* Header: stats strip on top (one line; scrolls sideways on its own), account row
+     (username, Edit, Logout | Upload, Invite, Donate as glyph buttons), then logo, donation
+     meter and a ☰ that opens the menu as a panel over the page, then search.
+     The panel and each section in it open on :hover / :focus-within. iOS Safari shows what a
+     tap's :hover reveals and holds that tap's click, so the first tap on a section expands it
+     and the second follows its link. `cursor: pointer` makes #menu (which draws the ☰)
+     tappable on iOS. Hidden sections are display: none, so they no longer widen the page. */
+  #header {
+    position: relative;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-areas: "user user user" "logo don menu" "search search search" "alerts alerts alerts";
+    gap: 8px 10px;
+  }
+  #userinfo { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 8px; padding: 0; }
+  #userinfo > #userinfo_stats {
+    grid-row: 1; grid-column: 1 / -1; margin: 0; padding: 2px 0 6px;
+    flex-wrap: nowrap; gap: 0 14px; white-space: nowrap; overflow-x: auto; scrollbar-width: none;
+    padding-right: 24px; border-bottom: 1px solid var(--line);
+    mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent);
+  }
+  #userinfo > #userinfo_stats::-webkit-scrollbar { display: none; }
+  #userinfo > #userinfo_username { grid-row: 2; grid-column: 1; margin: 0; flex-wrap: nowrap; align-items: center; gap: 4px; }
+  #userinfo > #userinfo_major { grid-row: 2; grid-column: 2; flex-wrap: nowrap; align-items: center; gap: 4px; padding-left: 8px; border-left: 1px solid var(--line); }
+  #userinfo > #userinfo_minor { grid-row: 3; grid-column: 1 / -1; justify-content: flex-start; }
+  #userinfo > #userinfo_minor:not(:has(a)) { display: none; }
+  #userinfo_username a.username { font-size: 14px; }
+  /* Glyph buttons; the label stays in the link for screen readers */
+  :is(#userinfo_username, #userinfo_major) a:is([href*="action=edit"], [href*="logout.php"], [href*="upload.php"], [href*="action=invite"], [href*="donate.php"]) {
+    display: flex; align-items: center; justify-content: center; width: 34px; height: 32px; font-size: 0; /* flex: in a grid the hidden label text took a row and pushed the icon up */
+    border: 1px solid var(--line); border-radius: 7px; background: var(--bg-raised);
+  }
+  /* Icons are masks (--i, from 00-tokens.css): font glyphs sit off-centre, differently per font */
+  :is(#userinfo_username, #userinfo_major) a:is([href*="action=edit"], [href*="logout.php"], [href*="upload.php"], [href*="action=invite"], [href*="donate.php"])::before {
+    content: ""; width: 17px; height: 17px; background: currentColor; -webkit-mask: var(--i) center / contain no-repeat; mask: var(--i) center / contain no-repeat;
+  }
+  #userinfo_username a[href*="action=edit"] { --i: var(--icon-edit); }
+  #userinfo_username a[href*="action=edit"]::before { content: "" / "Edit"; }
+  #userinfo_username a[href*="logout.php"] { --i: var(--icon-logout); color: var(--fg-muted); }
+  #userinfo_username a[href*="logout.php"]::before { content: "" / "Logout"; }
+  #userinfo_major a[href*="upload.php"] { --i: var(--icon-upload); }
+  #userinfo_major a[href*="upload.php"]::before { content: "" / "Upload"; }
+  #userinfo_major a[href*="action=invite"] { --i: var(--icon-invite); }
+  #userinfo_major a[href*="action=invite"]::before { content: "" / "Invite"; }
+  #userinfo_major a[href*="donate.php"] { --i: var(--icon-donate); }
+  #userinfo_major a[href*="donate.php"]::before { content: "" / "Donate"; }
+
+  #logo a { padding-left: 32px; background-size: 24px 24px; font-size: 18px; line-height: 26px; }
+  #donation { justify-self: end; font-size: 11px; }
+  #donation > div { row-gap: 3px; }
+  body div#DonInfo { justify-self: end; }
+  #DonBk img, #DonBr img { zoom: .64; }
+
+  /* ☰ and the menu panel */
+  /* #menu is the button; its ::before is the ☰ icon filling it (mask centred at 20px).
+     The panel's static position is right after the ::before, i.e. under the button. */
+  #menu {
+    grid-area: menu; width: 44px; height: 40px; cursor: pointer; color: var(--fg);
+    border: 1px solid var(--line-strong); border-radius: 8px; background: var(--bg-raised);
+  }
+  #menu::before {
+    content: "" / "Menu"; display: block; height: 100%; background: currentColor;
+    -webkit-mask: var(--icon-menu) center / 20px 20px no-repeat; mask: var(--icon-menu) center / 20px 20px no-repeat;
+  }
+  #menu:is(:hover, :focus-within) { border-color: var(--accent); color: var(--accent); }
+  #menu ul.potato-menu { display: none; }
+  /* top: auto keeps the panel just under the ☰; left/right span the header */
+  #menu:is(:hover, :focus-within) > ul.potato-menu {
+    display: block; position: absolute; left: 0; right: 0; z-index: 1000; margin-top: 6px; padding: 4px;
+    background: var(--bg-raised); border: 1px solid var(--line-strong); border-radius: 10px; box-shadow: var(--shadow-pop);
+  }
+  #menu .potato-menu-item { position: static; }
+  #menu ul.potato-menu > .potato-menu-item + .potato-menu-item { border-top: 1px solid var(--line); }
+  #menu ul.potato-menu > .potato-menu-item > a { display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 6px; font-size: 15px; white-space: normal; }
+  #menu ul.potato-menu > .potato-menu-item:has(> ul) > a::after { content: "▾"; margin-left: auto; padding-left: 8px; color: var(--fg-muted); font-size: 12px; }
+  #menu ul.potato-menu > .potato-menu-item:is(:hover, :focus-within) > a { background: var(--bg-hover); color: var(--accent); }
+  /* Sections: shown in place, two columns. `body #header` beats the desktop dropdown rule
+     and global.css's delayed visibility transition (a delayed reveal escapes iOS's check). */
+  body #header #menu .potato-menu-item > ul.potato-menu-group {
+    position: static; display: none; grid-template-columns: repeat(2, minmax(0, 1fr));
+    min-width: 0; padding: 2px 4px 6px 16px; visibility: visible; opacity: 1; transition: none;
+    background: none; border: 0; box-shadow: none;
+  }
+  body #header #menu .potato-menu-item:is(:hover, :focus-within) > ul.potato-menu-group { display: grid; }
+  #menu .potato-menu-item > ul.potato-menu-group .potato-menu-item > a { display: flex; align-items: center; min-height: 40px; padding: 0 8px; color: var(--link); white-space: normal; }
+
+  /* Search: main (torrents) full width, the rest three across; a field widens while in use */
+  #searchbars ul { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  #searchbars li { min-width: 0; }
+  #searchbars li:is(:first-child, :focus-within) { grid-column: 1 / -1; }
   .thin:has(> .main_column) { grid-template-columns: minmax(0, 1fr); }
   .thin:has(> .main_column) > .sidebar { grid-column: 1; }
   .filter_torrents { max-width: none; }
@@ -83,19 +171,22 @@
   /* Download: a glyph button top-right. Report: an icon chip at the stats line's right end,
      away from Download. The site's icons (browse) and "[DL]" text (series) are hidden. */
   .torrent_table tr:is(.torrent, .group_torrent) > td > span:has(> a[title=Download]) { float: right; margin: 0 0 4px 10px; font-size: 0; }
-  .torrent_table tr:is(.torrent, .group_torrent) a:is([title=Download], [title=Report]) { display: grid; place-items: center; font-size: 0; }
+  .torrent_table tr:is(.torrent, .group_torrent) a:is([title=Download], [title=Report]) { display: flex; align-items: center; justify-content: center; font-size: 0; }
   .torrent_table tr:is(.torrent, .group_torrent) a:is([title=Download], [title=Report]) > img { display: none; }
   .torrent_table tr:is(.torrent, .group_torrent) a[title=Download] {
     width: 38px; height: 34px; border-radius: 7px; color: var(--accent);
     background: color-mix(in srgb, var(--accent) 10%, transparent);
     border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
   }
-  .torrent_table tr:is(.torrent, .group_torrent) a[title=Download]::before { content: "↓" / "Download"; font: 700 16px/1 var(--font); }
+  .torrent_table tr:is(.torrent, .group_torrent) a:is([title=Download], [title=Report])::before { content: ""; width: 16px; height: 16px; background: currentColor; -webkit-mask: var(--i) center / contain no-repeat; mask: var(--i) center / contain no-repeat; }
+  .torrent_table tr:is(.torrent, .group_torrent) a[title=Download] { --i: var(--icon-download); }
+  .torrent_table tr:is(.torrent, .group_torrent) a[title=Download]::before { content: "" / "Download"; width: 18px; height: 18px; }
   .torrent_table tr:is(.torrent, .group_torrent) a[title=Report] {
     position: absolute; right: 12px; bottom: 10px; width: 30px; height: 30px;
     border: 1px solid var(--line); border-radius: 6px; color: var(--fg-muted);
   }
-  .torrent_table tr:is(.torrent, .group_torrent) a[title=Report]::before { content: "⚑" / "Report"; font-size: 14px; }
+  .torrent_table tr:is(.torrent, .group_torrent) a[title=Report] { --i: var(--icon-report); }
+  .torrent_table tr:is(.torrent, .group_torrent) a[title=Report]::before { content: "" / "Report"; }
   .torrent_table tr:is(.torrent, .group_torrent):has(a[title=Report])::after { content: ""; width: 30px; height: 30px; margin: 6px 0 0 auto; }
 
   /* Your torrents: a bar on the row's left edge in the link's status colour */
