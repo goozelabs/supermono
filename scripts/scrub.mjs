@@ -15,6 +15,15 @@ const out = join(dirname(fileURLToPath(import.meta.url)), '..', 'fixtures', 'cap
 const TRACKERS = { 'broadcasthe.net': 'btn', 'passthepopcorn.me': 'ptp' };
 // PTP drops its whole theme (one normalize-scss-based sheet) when an external stylesheet is set.
 const PTP_THEME = /^\s*\/\*! normalize-scss/;
+// PTP secrets beyond the shared patterns: the passkey isn't hex, the anti-CSRF token is also a
+// data attribute, and the security page shows the API user/key in unnamed inputs and a curl example.
+const PTP_SECRETS = [
+  [/\b(data-[\w-]*(?:auth|key|pass|token|csrf)[\w-]*)="[^"]*"/gi, '$1="REDACTED"'],
+  [/\/[A-Za-z0-9]{32}\/announce/g, '/REDACTED/announce'],
+  [/(Api(?:User|Key):<\/label>[\s\S]{0,200}?<input\b[^>]*\bvalue=")[^"]*"/g, '$1REDACTED"'],
+  [/\b(Api(?:User|Key)):\s*[A-Za-z0-9]+/g, '$1: REDACTED'],
+];
+const PTP_LEFTOVER = /\b(?:authkey|torrent_pass|passkey|auth|anticsrftoken|irckey|apiuser|apikey)["']?\s*[=:]\s*["']?(?!REDACTED)[A-Za-z0-9]{8,}/i;
 
 const SECRET_PARAMS = /\b(authkey|torrent_pass|passkey|auth|token)=([^&"'\s<>]+)/gi;
 const HEX = /\b[0-9a-f]{24,}\b/gi; // IRC key, auth hashes
@@ -32,6 +41,34 @@ export function detectTracker(html) {
   const tracker = TRACKERS[host];
   if (!tracker) throw new Error('unknown tracker');
   return tracker;
+}
+
+// --shapes: describe what in a raw capture looks like a secret (kind, name, host, length,
+// character set, count) without ever printing a value, so scrub patterns can be written
+// for a new tracker safely.
+const WORD = '[\\w$-]*(?:auth|key|pass|token|csrf|session)[\\w$-]*';
+const CANDIDATES = [
+  ['param', new RegExp(`[?&;](${WORD})=([^&"'\\s<>#]+)`, 'gi')],
+  ['path', /https?:\/\/([^/\s"'<>]+)\/([A-Za-z0-9]{24,})(?=[/"'?#\s])/g],
+  ['data', new RegExp(`\\bdata-(${WORD})="([^"]*)"`, 'gi')],
+  ['input', new RegExp(`<input\\b[^>]*\\bname="(${WORD})"[^>]*\\bvalue="([^"]*)"`, 'gi')],
+  ['js', new RegExp(`\\b(${WORD})\\s*[:=]\\s*["']([^"']{8,})["']`, 'gi')],
+];
+const charset = (v) => '[' + [[/[a-z]/, 'a-z'], [/[A-Z]/, 'A-Z'], [/[0-9]/, '0-9'], [/[^a-zA-Z0-9]/, '+other']]
+  .filter(([re]) => re.test(v)).map(([, s]) => s).join('') + ']';
+
+export function shapes(html) {
+  const seen = new Map();
+  const add = (key) => seen.set(key, (seen.get(key) ?? 0) + 1);
+  for (const [kind, re] of CANDIDATES) {
+    for (const [, a, b] of html.matchAll(re)) {
+      const [name, host] = kind === 'path' ? ['-', a] : [a, '-'];
+      add(b === 'REDACTED' ? `${kind} ${name} ${host} REDACTED` : `${kind} ${name} ${host} ${b.length} ${charset(b)}`);
+    }
+  }
+  const emails = (html.match(EMAIL) ?? []).filter((e) => e !== 'user@example.com').length;
+  if (emails) seen.set('email - - - -', emails);
+  return [...seen].map(([k, n]) => `${k} ${n}`).sort();
 }
 
 export function scrub(html) {
@@ -53,6 +90,7 @@ export function scrub(html) {
   });
 
   if (tracker === 'ptp') {
+    for (const [re, to] of PTP_SECRETS) html = html.replace(re, to);
     let themes = 0;
     html = html.replace(/<style\b[^>]*>([\s\S]*?)<\/style>/gi, (block, css) => {
       if (!PTP_THEME.test(css)) return block;
@@ -71,7 +109,9 @@ export function scrub(html) {
   const charset = html.match(/<meta charset[^>]*>/i);
   html = charset ? html.replace(charset[0], charset[0] + link) : html.replace(/<head[^>]*>/i, (h) => h + link);
 
-  if (LEFTOVER.test(html)) throw new Error('secret parameter survived scrubbing');
+  if (LEFTOVER.test(html) || (tracker === 'ptp' && PTP_LEFTOVER.test(html))) {
+    throw new Error('secret parameter survived scrubbing');
+  }
   return { tracker, html };
 }
 
@@ -100,4 +140,9 @@ function main(files) {
   process.exit(failed ? 1 : 0);
 }
 
-if (import.meta.url === pathToFileURL(process.argv[1]).href) main(process.argv.slice(2));
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+  const args = process.argv.slice(2);
+  if (args[0] === '--shapes') {
+    for (const file of args.slice(1)) console.log(`== ${relative(process.cwd(), file)}\n` + shapes(readFileSync(file, 'utf8')).join('\n'));
+  } else main(args);
+}
