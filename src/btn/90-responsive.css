@@ -9,11 +9,19 @@
   /* iOS Safari sizes text as text-size-adjust / zoom, so the adjust must match the zoom:
      100% renders text at 1/zoom, `auto` autosizes it unevenly. Feature query = iOS only. */
   @supports (-webkit-touch-callout: none) { html { -webkit-text-size-adjust: 200%; } }
-  button, .button, input[type=submit], input[type=button],
-  input:not([type=checkbox], [type=radio], [type=hidden], [type=image], [type=file]), select { min-height: 28px; }
-  /* no iOS focus-zoom; also beats the bbcode textarea and vader's `.ui-widget input` */
-  input, select, textarea,
-  body div.contenth textarea, body .ui-widget :is(input, select, textarea) { font-size: 16px; }
+  button, .button, input[type=submit], input[type=button] { min-height: 28px; }
+  /* iOS zooms into a focused field unless font-size x page scale >= 16, and it ignores CSS
+     zoom; BTN's page scale is 0.5. So fields get font-size 32px and their own zoom of 0.5:
+     they still render at 16pt but pass the check. With an effective zoom of 1, their px box
+     metrics are doubled to keep their usual size. `body` selectors beat the bbcode textarea
+     and vader's `.ui-widget input`. */
+  input:not([type=checkbox], [type=radio], [type=submit], [type=button], [type=reset], [type=image], [type=file], [type=range], [type=color], [type=hidden]),
+  select, textarea, body div.contenth textarea, body .ui-widget :is(input, select, textarea) {
+    zoom: .5; font-size: 32px;
+    padding: 8px 16px; min-height: 56px; border-width: 2px; border-radius: 8px;
+  }
+  textarea, body div.contenth textarea { min-height: 0; }
+  select:not([multiple]) { padding-right: 56px; background-position: right 30px center, right 20px center; background-size: 10px 10px; }
 }
 
 @media (max-width: 760px) and (pointer: fine), (pointer: coarse) and (max-width: 900px) {
@@ -48,20 +56,16 @@
     display: flex; align-items: center; justify-content: center; width: 34px; height: 32px; font-size: 0; /* flex: in a grid the hidden label text took a row and pushed the icon up */
     border: 1px solid var(--line); border-radius: 7px; background: var(--bg-raised);
   }
-  /* Icons are masks (--i, from 00-tokens.css): font glyphs sit off-centre, differently per font */
+  /* Icons are masks (--i, from 00-tokens.css): font glyphs sit off-centre, differently per font.
+     No alt text: each link keeps its own name (its hidden label, or its title). */
   :is(#userinfo_username, #userinfo_major) a:is([href*="action=edit"], [href*="logout.php"], [href*="upload.php"], [href*="action=invite"], [href*="donate.php"])::before {
     content: ""; width: 17px; height: 17px; background: currentColor; -webkit-mask: var(--i) center / contain no-repeat; mask: var(--i) center / contain no-repeat;
   }
   #userinfo_username a[href*="action=edit"] { --i: var(--icon-edit); }
-  #userinfo_username a[href*="action=edit"]::before { content: "" / "Edit"; }
   #userinfo_username a[href*="logout.php"] { --i: var(--icon-logout); color: var(--fg-muted); }
-  #userinfo_username a[href*="logout.php"]::before { content: "" / "Logout"; }
   #userinfo_major a[href*="upload.php"] { --i: var(--icon-upload); }
-  #userinfo_major a[href*="upload.php"]::before { content: "" / "Upload"; }
   #userinfo_major a[href*="action=invite"] { --i: var(--icon-invite); }
-  #userinfo_major a[href*="action=invite"]::before { content: "" / "Invite"; }
   #userinfo_major a[href*="donate.php"] { --i: var(--icon-donate); }
-  #userinfo_major a[href*="donate.php"]::before { content: "" / "Donate"; }
 
   #logo a { padding-left: 32px; background-size: 24px 24px; font-size: 18px; line-height: 26px; }
   #donation { justify-self: end; font-size: 11px; }
@@ -109,6 +113,35 @@
   .thin:has(> .main_column) { grid-template-columns: minmax(0, 1fr); }
   .thin:has(> .main_column) > .sidebar { grid-column: 1; }
   .filter_torrents { max-width: none; }
+  /* Profile and edit profile: the site's slider script shows one panel of a horizontal strip
+     per tab. Each page's own <style> fixes #slider and panel widths (580-790px); here the
+     slider is the content width and each panel exactly as wide (.scroll is the container
+     for cqw), so a tap still slides one panel. No panel margin: the script's step is one
+     panel width either way. `body #slider` beats the page's `#slider` rules. */
+  body #slider { width: auto; }
+  body #slider .scroll { width: auto; container-type: inline-size; }
+  body #slider .scrollContainer .panel { width: 100cqw; margin: 0; }
+  body ul.navigation { display: flex; flex-wrap: wrap; gap: 2px; padding: 4px; }
+  body ul.navigation li { display: contents; }
+  body ul.navigation a { padding: 6px 10px; }
+  body .usermenu { padding: 0; } /* profile: one border around the tabs, not two */
+  body .usermenu ul.navigation { margin: 0; border: 0; }
+  #slider h2 { overflow-wrap: anywhere; }
+  /* profile: avatar and its links above the tabs instead of beside them */
+  body .leftbar { float: none; display: flex; align-items: center; gap: 12px; margin-bottom: var(--gap); }
+  body .leftbar img { max-width: 120px; height: auto; }
+  body .leftbar ul { margin: 0; }
+  /* edit profile: label above field in every section's table (`.hide` still hides rows) */
+  #slider .panel table, #slider .panel table > tbody { display: block; }
+  #slider .panel table > tbody > tr:not(.hide) { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; padding: 6px 0; }
+  #slider .panel table > tbody > tr > td { display: block; width: auto; padding: 0; border: 0; text-align: left; }
+  #slider .panel table > tbody > tr > td.label { flex: 1 1 100%; white-space: normal; }
+  #slider .panel table > tbody > tr > td:not(.label) { flex: 1 1 100%; min-width: 0; }
+  #slider .panel :is(input:not([type=checkbox], [type=radio], [type=submit], [type=button], [type=hidden], [name=score]), textarea) { width: 100%; }
+  #slider .panel select { max-width: 100%; }
+  /* password strength meter: the site sizes its track in px */
+  #slider .password_strength_container { max-width: 100%; overflow: hidden; }
+
   /* Torrent filter: labels above their fields in one column (the label column pushed fields
      off the box), tag groups as collapsible rows of chips, Episode/Season and the country
      list as wrapping rows, and a footer of count, then Filter (primary) and Reset.
@@ -230,13 +263,12 @@
   }
   .torrent_table tr:is(.torrent, .group_torrent) a:is([title=Download], [title=Report])::before { content: ""; width: 16px; height: 16px; background: currentColor; -webkit-mask: var(--i) center / contain no-repeat; mask: var(--i) center / contain no-repeat; }
   .torrent_table tr:is(.torrent, .group_torrent) a[title=Download] { --i: var(--icon-download); }
-  .torrent_table tr:is(.torrent, .group_torrent) a[title=Download]::before { content: "" / "Download"; width: 18px; height: 18px; }
+  .torrent_table tr:is(.torrent, .group_torrent) a[title=Download]::before { width: 18px; height: 18px; }
   .torrent_table tr:is(.torrent, .group_torrent) a[title=Report] {
     position: absolute; right: 12px; bottom: 10px; width: 30px; height: 30px;
     border: 1px solid var(--line); border-radius: 6px; color: var(--fg-muted);
   }
   .torrent_table tr:is(.torrent, .group_torrent) a[title=Report] { --i: var(--icon-report); }
-  .torrent_table tr:is(.torrent, .group_torrent) a[title=Report]::before { content: "" / "Report"; }
   .torrent_table tr:is(.torrent, .group_torrent):has(a[title=Report])::after { content: ""; width: 30px; height: 30px; margin: 6px 0 0 auto; }
 
   /* Your torrents: a bar on the row's left edge in the link's status colour */

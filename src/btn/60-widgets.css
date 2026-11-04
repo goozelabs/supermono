@@ -71,4 +71,6 @@ body .ui-corner-all { border-radius: var(--radius); }
 /* vader's icon sprites are light grey: darken them on a light page */
 @media (prefers-color-scheme: light) {
   body .ui-icon { filter: invert(1) brightness(.8); }
+  /* sort icons in torrent-table headers are white images */
+  .torrent_table tr:is(.colhead, .colhead_dark) img { filter: invert(1) brightness(.8); }
 }

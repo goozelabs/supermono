@@ -74,19 +74,15 @@
     display: flex; align-items: center; justify-content: center; width: 34px; height: 32px; font-size: 0; /* flex: in a grid the hidden label text took a row and pushed the icon up */
     border: 1px solid var(--line); border-radius: 7px; background: var(--bg-raised);
   }
-  /* Icons are masks (--i, from 00-tokens.css): font glyphs sit off-centre, differently per font */
+  /* Icons are masks (--i, from 00-tokens.css): font glyphs sit off-centre, differently per font.
+     No alt text: each link keeps its own name (its hidden label, or its title). */
   :is(#nav_useredit, #nav_logout, #nav_upload, #nav_invite, #nav_donate) > a::before { content: ""; width: 17px; height: 17px; background: currentColor; -webkit-mask: var(--i) center / contain no-repeat; mask: var(--i) center / contain no-repeat; }
   #nav_userinfo a { font-size: 14px; }
   #nav_useredit > a { --i: var(--icon-edit); }
-  #nav_useredit > a::before { content: "" / "Edit"; }
   #nav_logout > a { --i: var(--icon-logout); color: var(--fg-muted); }
-  #nav_logout > a::before { content: "" / "Logout"; }
   #nav_upload > a { --i: var(--icon-upload); }
-  #nav_upload > a::before { content: "" / "Upload"; }
   #nav_invite > a { --i: var(--icon-invite); }
-  #nav_invite > a::before { content: "" / "Invite"; }
   #nav_donate > a { --i: var(--icon-donate); }
-  #nav_donate > a::before { content: "" / "Donate"; }
 
   /* "More": its list opens full width under the quick links. The opener is not positioned,
      so the list's containing block is #header, outside the scrolling line, and is not cut off. */
@@ -160,6 +156,18 @@
 
 @media (max-width: 520px) and (pointer: fine), (pointer: coarse) and (max-device-width: 600px) {
   .forum-post__avatar-and-body { flex-direction: column; }
+  /* Request details: label above value (the no-wrap label column pushed values off-screen) */
+  #request-table, #request-table > tbody, #request-table > tbody > tr, #request-table > tbody > tr > td { display: block; width: auto; }
+  #request-table > colgroup { display: none; }
+  #request-table > tbody > tr > td { border: 0; overflow-wrap: anywhere; }
+  #request-table > tbody > tr > td.label { padding-bottom: 0; text-align: left; white-space: normal; color: var(--fg-muted); }
+  #request-table > tbody > tr + tr { border-top: 1px solid var(--line); }
+  /* Upload: the list's name column may wrap; the artist row's fields shrink to the row
+     (a fixed layout lets their max-width: 100% apply instead of the size attribute) */
+  #content .table:not(.torrent_table) td.nobr { white-space: normal; overflow-wrap: anywhere; }
+  #artistlist { table-layout: fixed; width: 100%; }
+  #artistlist td { width: auto; white-space: normal; } /* drop the 25% / 1% / 1% column hints */
+  #artistlist input { width: 100%; }
   .forum-post__avatar { display: flex; align-items: center; gap: 10px; padding: 8px 12px 0; text-align: left; }
   .forum-post__avatar__image { max-width: 56px; }
   /* Wide request table scrolls sideways instead of squashing */
@@ -240,7 +248,7 @@
   :is(.basic-movie-list, .movie-page__torrent-table) a:is([title=Download], [title=Report], [title=Permalink])::before,
   .basic-movie-list__movie__bookmark > a::before { content: ""; width: 16px; height: 16px; background: currentColor; -webkit-mask: var(--i) center / contain no-repeat; mask: var(--i) center / contain no-repeat; }
   :is(.basic-movie-list, .movie-page__torrent-table) a[title=Download] { --i: var(--icon-download); }
-  :is(.basic-movie-list, .movie-page__torrent-table) a[title=Download]::before { content: "" / "Download"; width: 18px; height: 18px; }
+  :is(.basic-movie-list, .movie-page__torrent-table) a[title=Download]::before { width: 18px; height: 18px; }
   :is(.basic-movie-list, .movie-page__torrent-table) a:is([title=Report], [title=Permalink]),
   .basic-movie-list__movie__bookmark > a {
     position: absolute; right: 12px; bottom: 10px; width: 30px; height: 30px;
@@ -248,11 +256,8 @@
   }
   :is(.basic-movie-list, .movie-page__torrent-table) a[title=Report]:has(~ a[title=Permalink]) { right: 50px; }
   :is(.basic-movie-list, .movie-page__torrent-table) a[title=Report] { --i: var(--icon-report); }
-  :is(.basic-movie-list, .movie-page__torrent-table) a[title=Report]::before { content: "" / "Report"; }
   :is(.basic-movie-list, .movie-page__torrent-table) a[title=Permalink] { --i: var(--icon-permalink); }
-  :is(.basic-movie-list, .movie-page__torrent-table) a[title=Permalink]::before { content: "" / "Permalink"; }
   .basic-movie-list__movie__bookmark > a { --i: var(--icon-bookmark); }
-  .basic-movie-list__movie__bookmark > a::before { content: "" / "Bookmark"; }
   .basic-movie-list__movie__bookmark > a { top: 10px; bottom: auto; } /* movie rows have no Download: same corner */
   .basic-movie-list > tbody > tr.basic-movie-list__details-row:not(.hidden) > td:nth-child(2) { padding-right: 40px; } /* beats the cell reset */
   :is(.basic-movie-list, .movie-page__torrent-table) tr:has(a[title=Report])::after {
