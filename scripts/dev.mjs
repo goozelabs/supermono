@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Local styling loop: rebuild dist/ when src/ changes, keep fixtures/captured/index.json
-// listing the captures, and serve the repo with browser-sync, which swaps in new CSS
+// listing the captures per tracker, and serve the repo with browser-sync, which swaps in new CSS
 // without a reload. Extra args go to browser-sync (e.g. --no-open).
 //   node scripts/dev.mjs   ->  http://localhost:3000/fixtures/
 import { spawn } from 'node:child_process';
@@ -12,10 +12,12 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const captured = join(root, 'fixtures', 'captured');
 mkdirSync(captured, { recursive: true });
 
-const writeIndex = () => writeFileSync(join(captured, 'index.json'),
-  JSON.stringify(readdirSync(captured).filter((f) => f.endsWith('.html')).sort()));
+const TRACKERS = ['btn', 'ptp'];
+for (const t of TRACKERS) mkdirSync(join(captured, t), { recursive: true });
+const writeIndex = () => writeFileSync(join(captured, 'index.json'), JSON.stringify(Object.fromEntries(
+  TRACKERS.map((t) => [t, readdirSync(join(captured, t)).filter((f) => f.endsWith('.html')).sort()]))));
 writeIndex();
-watch(captured, (_, file) => { if (file?.endsWith('.html')) writeIndex(); });
+watch(captured, { recursive: true }, (_, file) => { if (file?.endsWith('.html')) writeIndex(); });
 
 // One build at a time; a change during a build queues one more.
 let building = false, queued = false, timer;
@@ -27,7 +29,7 @@ const build = () => {
     if (queued) { queued = false; build(); }
   });
 };
-watch(join(root, 'src'), () => { clearTimeout(timer); timer = setTimeout(build, 100); });
+watch(join(root, 'src'), { recursive: true }, () => { clearTimeout(timer); timer = setTimeout(build, 100); });
 build();
 
 spawn('npx', ['--yes', 'browser-sync@3.0.4', 'start', '--server', '--files', 'dist/*.css',

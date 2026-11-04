@@ -1,0 +1,136 @@
+/* Page shell: header, menu, content grid, footer. Narrow-screen rules are in 90-responsive.css. */
+#wrapper { max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter) var(--gutter); }
+
+#header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "user" "logo" "menu" "search";
+  align-items: center;
+  gap: 8px var(--gap);
+  padding-top: 4px;
+}
+#userinfo { grid-area: user; }
+.site-logo { grid-area: logo; }
+.main-menu { grid-area: menu; }
+.search-bar { grid-area: search; }
+
+/* Top strip: stats top-left, minor links top-right; account and major links on a second
+   row, right-justified. ::after is a full-width flex item that forces the row break. */
+#userinfo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 4px 16px;
+  padding: 4px 0;
+  font-size: var(--fs-sm);
+  color: var(--fg-muted);
+}
+#userinfo::after { content: ""; order: 3; flex-basis: 100%; height: 0; }
+#userinfo ul { display: flex; flex-wrap: wrap; gap: 2px 12px; margin: 0; padding: 0; list-style: none; }
+#userinfo li { margin: 0; }
+#userinfo a { color: var(--fg); }
+#userinfo a:hover { color: var(--accent-hover); }
+#userinfo .user-info-bar__text { color: var(--fg); }
+#userinfo > #userinfo_stats { order: 1; }
+/* `#userinfo >` so the auto margins beat `#userinfo ul { margin: 0 }` */
+#userinfo > #userinfo_minor { order: 2; margin-left: auto; justify-content: flex-end; }
+#userinfo > #userinfo_username { order: 4; margin-left: auto; font-weight: 600; }
+#nav_userinfo a { font-weight: 900; }
+#userinfo > #userinfo_major { order: 5; font-weight: 600; }
+#userinfo .user-info-bar__link--donations-behind { color: var(--warn); }
+
+/* "More" drop-down in the minor list */
+.user-info-bar__item--drop-down-menu-opener { position: relative; }
+.user-info-bar__item--drop-down-menu-opener > a::after { content: " ▾"; color: var(--fg-muted); }
+#userinfo .user-info-bar__drop-down-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 1000;
+  display: none;
+  flex-direction: column;
+  gap: 0;
+  min-width: 180px;
+  padding: 4px;
+  background: var(--bg-raised);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-pop);
+  font-size: var(--fs);
+}
+.user-info-bar__item--drop-down-menu-opener:is(:hover, :focus-within) > .user-info-bar__drop-down-menu { display: flex; }
+.user-info-bar__drop-down-menu a { display: block; padding: 5px 10px; border-radius: var(--radius-sm); }
+.user-info-bar__drop-down-menu a:hover { background: var(--bg-hover); text-decoration: none; }
+
+/* Logo: the image lives in the replaced theme; render the site icon and the name as text. */
+.site-logo__link {
+  display: inline-block;
+  padding-left: 40px;
+  background: url(https://passthepopcorn.me/static/common/touch-icon-iphone-retina.png) left center / 32px 32px no-repeat;
+  color: var(--fg);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  line-height: 32px;
+}
+.site-logo__link::before { content: "PassThePopcorn"; }
+.site-logo__link:hover { color: var(--accent-hover); text-decoration: none; }
+
+/* Menu */
+.main-menu {
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.main-menu__list { display: flex; flex-wrap: wrap; margin: 0; padding: 0; list-style: none; }
+.main-menu__item { margin: 0; }
+.main-menu__link { display: block; padding: 8px 14px; color: var(--fg); white-space: nowrap; }
+.main-menu__link:hover, .main-menu__link:focus-visible {
+  background: var(--bg-hover);
+  color: var(--accent-hover);
+  text-decoration: none;
+}
+
+/* Search row */
+.search-bar__list { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.search-bar__search-field { position: relative; flex: 1 1 130px; margin: 0; }
+.search-bar__search-field__input { width: 100%; }
+.search-bar__results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  margin: 2px 0 0;
+  padding: 4px;
+  list-style: none;
+  background: var(--bg-raised);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-pop);
+}
+
+/* Content: page body, optionally with a sidebar (first in source; shown on the right, as on BTN) */
+#content { margin: var(--gap) 0; min-width: 0; }
+/* Inline fixed widths (e.g. upload page blocks at 700px) never exceed the column */
+#content [style*="width"] { max-width: 100%; }
+.page__title { margin: 0 0 8px; }
+
+.thin:has(> .main-column) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--side-w);
+  grid-auto-flow: row dense;
+  gap: 0 var(--gap);
+  align-items: start;
+}
+.thin:has(> .main-column) > * { grid-column: 1 / -1; }
+.thin:has(> .main-column) > .main-column { grid-column: 1; min-width: 0; }
+.thin:has(> .main-column) > .sidebar { grid-column: 2; min-width: 0; }
+
+#footer { margin-top: var(--gap); padding: var(--gap) 0; color: var(--fg-muted); text-align: center; font-size: var(--fs-sm); }
+.footer__disclaimer { max-width: 900px; margin: 0 auto 6px; }
+.footer__load { margin: 0; }
+
+/* Overlays toggled by site JS (.hidden removed when open) */
+.lightbox__shroud { position: fixed; inset: 0; z-index: 1001; background: #000; opacity: .8; }
+.lightbox { position: fixed; inset: 5%; z-index: 1002; overflow: auto; text-align: center; }

@@ -1,0 +1,269 @@
+/* Components: panels, tables, forms and grid, navigation strips, alerts, lists,
+   forum posts and the BBCode editor. PTP's BEM names map onto BTN's look:
+   .panel = .box, .panel__heading = .head, .tabs = the profile tab strip. */
+
+/* Panels */
+.panel {
+  margin: 0 0 var(--gap);
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-panel);
+  overflow-x: auto; /* clips corners; wide content scrolls instead of being cut off */
+}
+.panel--no-margin { margin: 0; }
+.panel__heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  padding: 7px 12px;
+  background: var(--bg-head);
+  border-bottom: 1px solid var(--line);
+  font-weight: 600;
+}
+.panel__heading__title { flex: 1 1 auto; }
+.panel__heading a { color: var(--fg); }
+.panel__heading__toggler { margin-left: auto; font-size: var(--fs-sm); font-weight: 400; }
+.panel__heading .panel__heading__toggler { color: var(--fg-muted); }
+.panel__body { padding: var(--gap); }
+.sidebar .panel__body { padding: 10px 12px; }
+.sidebar-cover-image { display: block; margin: 0 auto; border-radius: var(--radius-sm); }
+
+/* Tables */
+table { width: 100%; border-collapse: collapse; }
+td, th { padding: var(--cell-y) var(--cell-x); vertical-align: middle; text-align: left; }
+th { font-weight: 600; }
+thead tr, thead th, thead td { background: var(--bg-head); }
+thead a { color: var(--fg); }
+td.label { width: 1%; white-space: nowrap; font-weight: 600; text-align: right; }
+th.sign, td.sign { width: 1%; text-align: center; }
+
+/* separate borders: border-radius is ignored on collapsed tables */
+.table--panel-like {
+  margin: 0 0 var(--gap);
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-panel);
+  overflow: hidden;
+}
+:where(.table--bordered) > :is(tbody, thead) + tbody > tr:first-child > td,
+:where(.table--bordered) > tbody > tr + tr > td,
+:where(.table--bordered) > thead + tbody > tr:first-child > td { border-top: 1px solid var(--line); }
+.table--striped > tbody > tr:nth-child(even) { background: color-mix(in srgb, var(--bg-hover) 45%, var(--bg-raised)); }
+.table--striped > tbody > tr:hover { background: var(--bg-hover); }
+.table--no-border, .table--no-border td { border: 0; }
+
+/* Forms */
+input:not([type=checkbox], [type=radio], [type=submit], [type=button], [type=reset], [type=image], [type=file], [type=range], [type=color], [type=hidden]),
+select, textarea {
+  font: inherit;
+  color: var(--fg);
+  background: var(--bg-sunken);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  padding: 4px 8px;
+  min-width: 0;
+  max-width: 100%;
+}
+input:not([type=checkbox], [type=radio], [type=submit], [type=button], [type=reset], [type=image], [type=file], [type=range], [type=color], [type=hidden]):hover,
+select:hover, textarea:hover { border-color: var(--fg-muted); }
+input:focus, select:focus, textarea:focus { border-color: var(--accent); outline-offset: 0; }
+::placeholder { color: var(--fg-muted); opacity: .8; }
+input[type=checkbox], input[type=radio], input[type=range] { accent-color: var(--accent); }
+textarea { resize: vertical; }
+textarea.form__input, .forum-post__textarea { width: 100%; }
+/* Own chevron: the native caret sits against the border. Each gradient draws one
+   currentColor stroke (left "\", right "/") across its square. */
+select:not([multiple]) {
+  appearance: none;
+  padding-right: 28px;
+  background-image:
+    linear-gradient(45deg, transparent 38%, currentColor 38% 62%, transparent 62%),
+    linear-gradient(135deg, transparent 38%, currentColor 38% 62%, transparent 62%);
+  background-position: right 15px center, right 10px center;
+  background-size: 5px 5px;
+  background-repeat: no-repeat;
+}
+
+button, input[type=submit], input[type=button], input[type=reset] {
+  font: inherit;
+  color: var(--fg);
+  background: var(--bg-hover);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  padding: 4px 12px;
+  cursor: pointer;
+}
+button:hover, input[type=submit]:hover, input[type=button]:hover, input[type=reset]:hover {
+  border-color: var(--accent);
+  color: var(--accent-hover);
+}
+button:active, input[type=submit]:active { background: var(--bg-head); }
+
+.form__label { font-weight: 600; }
+.form__checkbox-label, .form__radio-label { display: inline-flex; align-items: center; gap: 4px; margin-right: 12px; }
+.form__group { margin: 0 0 8px; }
+.input-group { display: flex; gap: 6px; }
+.input-group__field { flex: 1; min-width: 0; }
+
+/* Grid: 10-column rows used by every form (label 2/10, field 8/10) */
+.grid { display: flex; flex-wrap: wrap; align-items: baseline; margin: 0 -6px; }
+.grid__item { padding: 4px 6px; min-width: 0; }
+.grid-u-1, .grid-u-10-10 { width: 100%; }
+.grid-u-1-3 { width: 33.333%; }
+.grid-u-1-10 { width: 10%; }
+.grid-u-2-10 { width: 20%; }
+.grid-u-3-10 { width: 30%; }
+.grid-u-4-10 { width: 40%; }
+.grid-u-5-10 { width: 50%; }
+.grid-u-6-10 { width: 60%; }
+.grid-u-7-10 { width: 70%; }
+.grid-u-8-10 { width: 80%; }
+.grid-u-9-10 { width: 90%; }
+.grid-offset-u-1-10 { margin-left: 10%; }
+.grid-offset-u-2-10 { margin-left: 20%; }
+.form--horizontal .grid__item:has(> .form__label:only-child) { text-align: right; }
+.generic-form__footer, .search-form__footer { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--line); }
+.search-form__footer, .search-form__footer--right-aligned { text-align: right; }
+.search-form--narrow { max-width: 900px; margin-left: auto; margin-right: auto; }
+.toggleable-search-form { margin: 0 0 var(--gap); }
+.toggleable-search-form__toggler-container { display: flex; justify-content: center; align-items: center; gap: 8px; margin-bottom: 8px; }
+
+/* Navigation strips. Plain text flow, not flex: PTP wraps links in bare "[" "]" text,
+   which flex would turn into separate gapped items. */
+.linkbox { padding: 6px 0; text-align: center; }
+.linkbox__link--current { color: var(--accent-hover); font-weight: 600; }
+
+/* font-size 0 hides the bare " | " text between links; the links reset it */
+.pagination { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; margin: 8px 0; font-size: 0; }
+.pagination:empty { display: none; }
+.pagination__link, .pagination__current-page {
+  min-width: 28px;
+  padding: 3px 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--bg-raised);
+  font-size: var(--fs);
+  text-align: center;
+}
+.pagination__link:hover { border-color: var(--accent); text-decoration: none; }
+.pagination__current-page { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); font-weight: 600; }
+
+/* Tab strip (settings, profile, movie comments): BTN's profile-settings look */
+.tabs__bar__list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+  margin: 0 0 var(--gap);
+  padding: 4px;
+  list-style: none;
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.tabs__bar__item { margin: 0; }
+.tabs__bar__link { display: block; padding: 6px 14px; color: var(--fg); border-radius: var(--radius-sm); }
+.tabs__bar__link:hover { background: var(--bg-hover); color: var(--accent-hover); text-decoration: none; }
+.tabs__bar__item--active .tabs__bar__link { background: var(--accent); color: var(--accent-fg); }
+.tabs__panel:not(.tabs__panel--active) { display: none; }
+.simple-tabs__link { color: var(--fg-muted); }
+.simple-tabs__link--active { color: var(--fg); font-weight: 600; }
+
+/* Alerts */
+.alert {
+  margin: 0 0 8px;
+  padding: 8px 12px;
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+}
+.alert--warning { background: var(--warn-bg); border-color: var(--warn); }
+.alert--error { background: var(--bad-bg); border-color: var(--bad); }
+
+/* Lists and headings */
+.list--unstyled, .list--inline { list-style: none; padding: 0; }
+.list--inline { display: flex; flex-wrap: wrap; gap: 4px 14px; }
+.list--inline-full-width { justify-content: space-between; }
+.list--small-padding li { margin: 0; padding: 1px 0; }
+.list--bulleted { list-style: disc; padding-left: 1.4em; }
+.heading { margin-top: var(--gap); text-align: left; }
+.heading--small-bottom-margin { margin-bottom: 6px; }
+.time { color: var(--fg-muted); }
+
+/* Forum posts (threads, comments, reply box): BTN's rounded post cards */
+.forum-post {
+  margin: 0 0 var(--gap);
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.forum-post--unread { border-color: var(--accent); }
+.forum-post__heading {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 12px;
+  padding: 6px 12px;
+  background: var(--bg-head);
+  border-bottom: 1px solid var(--line);
+}
+.forum-post__heading > span { float: none !important; } /* inline float:left/right */
+.forum-post__heading a { color: var(--fg); }
+.forum-post__heading .username { font-weight: 700; }
+.forum-post__id { color: var(--fg-muted); }
+.user_title { color: var(--fg-muted); }
+.forum-post__avatar-and-body { display: flex; }
+.forum-post__avatar { flex: 0 0 170px; padding: 10px; text-align: center; }
+.forum-post__avatar__image { max-width: 100%; }
+.forum-post__body { flex: 1; min-width: 0; padding: 12px; overflow-wrap: anywhere; }
+.forum-post__edited { margin-top: 1em; font-size: var(--fs-sm); color: var(--fg-muted); }
+.forum-post__preview:empty { display: none; }
+.forum-post__buttons { margin-top: 8px; text-align: right; }
+
+/* BBCode editor: the sprite icons went with PTP's theme, so buttons are labelled in text. */
+#Bbcode_Toolbar { display: flex; flex-wrap: wrap; gap: 2px; padding: 4px; margin: 0 0 4px; background: var(--bg-head); border-radius: var(--radius-sm); }
+.bbcode-toolbar__button {
+  width: auto !important; /* inline sprite width */
+  min-width: 26px;
+  padding: 2px 6px;
+  background: none !important; /* inline sprite position */
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--fg);
+  font-size: var(--fs-sm);
+  text-align: center;
+  cursor: pointer;
+}
+.bbcode-toolbar__button:hover { background: var(--bg-hover) !important; border-color: var(--line-strong); }
+.js-bbcode-toolbar__bold-button::before { content: "B"; font-weight: 700; }
+.js-bbcode-toolbar__italic-button::before { content: "I"; font-style: italic; }
+.js-bbcode-toolbar__underline-button::before { content: "U"; text-decoration: underline; }
+.js-bbcode-toolbar__strikethrough-button::before { content: "S"; text-decoration: line-through; }
+.js-bbcode-toolbar__link-button::before { content: "Link"; }
+.js-bbcode-toolbar__image-button::before { content: "Img"; }
+.js-bbcode-toolbar__hide-button::before { content: "Hide"; }
+.js-bbcode-toolbar__spoiler-button::before { content: "Spoiler"; }
+.js-bbcode-toolbar__quote-button::before { content: "Quote"; }
+.js-bbcode-toolbar__size-button::before { content: "Size"; }
+.js-bbcode-toolbar__color-button::before { content: "Color"; }
+.js-bbcode-toolbar__youtube-button::before { content: "Video"; }
+.js-bbcode-toolbar__mediainfo-button::before { content: "MediaInfo"; }
+.js-bbcode-toolbar__align-center-button::before { content: "Center"; }
+.js-bbcode-toolbar__align-right-button::before { content: "Right"; }
+.js-bbcode-toolbar__code-button::before { content: "Code"; font-family: var(--mono); }
+.js-bbcode-toolbar__list-button::before { content: "List"; }
+.js-bbcode-toolbar__emoticon-button::before { content: "☺"; }
+.js-bbcode-toolbar__comparison-button::before { content: "Compare"; }
+
+/* BBCode output */
+.bbcode__image { max-width: 100%; }
+.code--copyable { padding: 1px 5px; background: var(--bg-sunken); border: 1px solid var(--line); border-radius: var(--radius-sm); }
+blockquote.spoiler { border-left-color: var(--warn); }

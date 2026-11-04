@@ -1,0 +1,37 @@
+/* Semantic colours: user classes, ratio, torrent status.
+   Hue families follow BTN's sheet (staff green, rank ladder yellow > orange > red >
+   magenta, specials purple); each value is `light-dark(on-light, on-dark)` and is
+   checked for WCAG AA by scripts/contrast.mjs. Classes seen in captures only.
+   `body` prefix: beats `.forum-post__heading a` and `.panel__heading a` (same specificity, earlier file). */
+
+/* Staff */
+body .username--team-leader { color: light-dark(#13722f, #5df07a); font-weight: 700; }
+
+/* Rank ladder */
+body .username--user { color: var(--fg); }
+body .username--member { color: light-dark(#705f00, #fff09a); }
+body .username--power-user { color: light-dark(#7d6100, #ffe83a); }
+body .username--elite { color: light-dark(#a8440c, #ff8a47); }
+body .username--torrent-master { color: light-dark(#c4260f, #ff5a3d); }
+body .username--torrent-king { color: light-dark(#a8128f, #ff63e6); }
+
+/* Specials */
+body .username--vip { color: light-dark(#6a28c9, #b38cff); }
+body .username--custom-class { color: light-dark(#8e1fa6, #d27be8); }
+
+/* Ratio (ratio-NN: tenths, capped) */
+.ratio-00 { color: var(--bad); }
+.ratio-01, .ratio-02, .ratio-03 { color: light-dark(#b82c0d, #ff5f3d); }
+.ratio-04, .ratio-05, .ratio-06 { color: var(--orange); }
+.ratio-07, .ratio-08, .ratio-09 { color: var(--warn); }
+.ratio-10 { color: light-dark(#3f6d0c, #8ed03a); }
+.ratio-20, .ratio-50, .ratio-99 { color: var(--good); }
+
+/* Your own torrents in lists, and torrent flags */
+.torrent-info-link--user-seeding { color: var(--good); font-weight: 600; }
+.torrent-info-link--user-leeching { color: var(--warn); font-weight: 600; }
+.torrent-info-link--user-snatched { color: var(--info); font-weight: 600; }
+.torrent-info-link--user-downloaded { color: var(--orange); font-weight: 600; }
+.torrent-info__download-modifier--free { color: var(--good); font-weight: 600; }
+.torrent-info__trumpable { color: var(--warn); }
+.torrent-info__reported { color: var(--bad); }

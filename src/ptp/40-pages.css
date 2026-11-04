@@ -1,0 +1,88 @@
+/* Page-specific layout. */
+
+/* Home: Latest Torrents / Golden Popcorn / Personal Rips covers are background images on
+   empty links, sized by the replaced theme. */
+.last5-movies__link {
+  display: block;
+  width: 100%;
+  max-width: 140px;
+  aspect-ratio: 2 / 3;
+  margin: 0 auto 6px;
+  background: var(--bg-sunken) center / cover no-repeat;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-panel);
+}
+.last5-movies__link:hover { outline: 2px solid var(--accent); outline-offset: 1px; }
+.last5-movies__table td { vertical-align: top; }
+
+/* Movie lists (browse list view, seeding, collections, top 10): group row with cover,
+   then edition sub-headings and torrent rows. */
+.basic-movie-list td[rowspan] { width: 1%; vertical-align: top; }
+/* fixed width: max-width: 100% alone collapses the image in a shrink-to-fit cell */
+.basic-movie-list__movie__cover { display: block; width: 64px; max-width: none; border-radius: var(--radius-sm); }
+.basic-movie-list__details-row > td { vertical-align: top; }
+.basic-movie-list__movie__title { font-weight: 600; color: var(--fg); }
+.basic-movie-list__movie__year, .basic-movie-list__movie__director-list { color: var(--fg-muted); }
+.basic-movie-list__movie__new { margin-left: 4px; color: var(--accent-hover); font-size: var(--fs-sm); }
+.basic-movie-list__movie__bookmark { float: right; margin-left: 12px; font-size: var(--fs-sm); }
+.basic-movie-list__movie__ratings-and-tags { margin-top: 2px; font-size: var(--fs-sm); color: var(--fg-muted); }
+.basic-movie-list__movie__rating-container { display: inline-block; margin-right: 10px; }
+.basic-movie-list__movie__rating__rating { color: var(--fg); }
+.basic-movie-list__movie__tags { display: block; }
+.basic-movie-list__torrent-edition, .group_torrent > .basic-movie-list__torrent-edition {
+  background: var(--bg-sunken);
+  color: var(--fg-muted);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+.basic-movie-list__torrent-edition__main { color: var(--fg); }
+.basic-movie-list__torrent__action { margin-right: 6px; color: var(--fg-muted); }
+.basic-movie-list__torrent__action a { color: var(--fg-muted); }
+.basic-movie-list__torrent-row:hover, .group_torrent_header:hover { background: var(--bg-hover); }
+td.no-seeders { color: var(--bad); }
+
+/* Cover view: rows of poster cards. A grid replaces the fixed rows of five and the empty
+   divs the site puts between them. */
+.cover-movie-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: var(--gap); margin: 0 0 var(--gap); }
+.cover-movie-list > :not(.cover-movie-list__movie) { display: none; }
+.cover-movie-list__movie {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.cover-movie-list__movie__cover-link { display: block; aspect-ratio: 2 / 3; background-color: var(--bg-sunken); }
+.cover-movie-list__movie__cover-link:hover { opacity: .9; }
+.cover-movie-list__movie__undercover { padding: 6px 8px 8px; font-size: var(--fs-sm); }
+.cover-movie-list__movie__title { font-weight: 600; color: var(--fg); }
+.cover-movie-list__movie__year { color: var(--fg-muted); }
+.cover-movie-list__movie__rating-and-tags { margin-top: 2px; color: var(--fg-muted); }
+.cover-movie-list__movie__rating { margin-right: 6px; font-weight: 600; color: var(--fg); }
+.cover-movie-list__movie__tag { color: var(--fg-muted); }
+
+/* Sidebar panels hold pasted URLs (collection descriptions); wrap instead of clipping */
+.sidebar { overflow-wrap: anywhere; }
+
+/* Small cover strips (profile recent snatches, etc.): inline `background:` shorthand
+   resets size and position, hence !important. */
+.small-cover-movie-list__container { display: grid; grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 6px; }
+.small-cover-movie-list__container > :not(.small-cover-movie-list__movie), .small-cover-movie-list__container::after { display: none; }
+.small-cover-movie-list__movie__link {
+  display: block;
+  aspect-ratio: 2 / 3;
+  background-color: var(--bg-sunken);
+  background-size: cover !important;
+  background-position: center !important;
+  border-radius: var(--radius-sm);
+}
+
+/* Forums: read/unread markers were theme images; draw them. Sticky and locked add a glyph. */
+:is(.forum_index, .forum_list) td[class^="forum-topic--"] { width: 1%; padding-right: 0; white-space: nowrap; text-align: center; }
+td[class^="forum-topic--is-unread"]::before { content: "●"; color: var(--accent); }
+td[class^="forum-topic--is-read"]::before { content: "○"; color: var(--fg-muted); }
+td[class^="forum-topic--"][class*="-sticky"]::after { content: " 📌"; font-size: .85em; }
+td[class^="forum-topic--"][class*="-locked"]:not([class*="-sticky"])::after { content: " 🔒"; font-size: .85em; }
+.forum_list .last_topic, .forum_list .last_poster { display: block; }
