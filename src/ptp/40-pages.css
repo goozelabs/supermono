@@ -1,0 +1,16 @@
+/* Page-specific layout. */
+
+/* Home: Latest Torrents / Golden Popcorn / Personal Rips covers are background images on
+   empty links, sized by the replaced theme. */
+.last5-movies__link {
+  display: block;
+  width: 100%;
+  max-width: 140px;
+  aspect-ratio: 2 / 3;
+  margin: 0 auto 6px;
+  background: var(--bg-sunken) center / cover no-repeat;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-panel);
+}
+.last5-movies__link:hover { outline: 2px solid var(--accent); outline-offset: 1px; }
+.last5-movies__table td { vertical-align: top; }

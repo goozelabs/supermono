@@ -133,8 +133,9 @@ button:active, input[type=submit]:active { background: var(--bg-head); }
 .toggleable-search-form { margin: 0 0 var(--gap); }
 .toggleable-search-form__toggler-container { display: flex; justify-content: center; align-items: center; gap: 8px; margin-bottom: 8px; }
 
-/* Navigation strips */
-.linkbox { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 10px; padding: 6px 0; text-align: center; }
+/* Navigation strips. Plain text flow, not flex: PTP wraps links in bare "[" "]" text,
+   which flex would turn into separate gapped items. */
+.linkbox { padding: 6px 0; text-align: center; }
 .linkbox__link--current { color: var(--accent-hover); font-weight: 600; }
 
 /* font-size 0 hides the bare " | " text between links; the links reset it */

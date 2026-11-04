@@ -14,12 +14,12 @@
 .main-menu { grid-area: menu; }
 .search-bar { grid-area: search; }
 
-/* Top strip: account info */
+/* Top strip: stats top-left; minor links top-right, account and major links below them */
 #userinfo {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end; /* wrapped lines stay right */
-  align-items: center;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-areas: "stats minor minor" ". username major";
+  align-items: start;
   gap: 4px 16px;
   padding: 4px 0;
   font-size: var(--fs-sm);
@@ -30,12 +30,11 @@
 #userinfo a { color: var(--fg); }
 #userinfo a:hover { color: var(--accent-hover); }
 #userinfo .user-info-bar__text { color: var(--fg); }
-#userinfo_minor { order: 1; width: 100%; justify-content: flex-end; }
-/* `#userinfo >` so the auto margin beats `#userinfo ul { margin: 0 }`: stats left, rest right */
-#userinfo > #userinfo_stats { order: 2; margin-right: auto; }
-#userinfo_username { order: 3; font-weight: 600; }
+#userinfo_stats { grid-area: stats; }
+#userinfo_minor { grid-area: minor; justify-content: flex-end; }
+#userinfo_username { grid-area: username; justify-self: end; font-weight: 600; }
 #nav_userinfo a { font-weight: 900; }
-#userinfo_major { order: 4; font-weight: 600; }
+#userinfo_major { grid-area: major; font-weight: 600; }
 #userinfo .user-info-bar__link--donations-behind { color: var(--warn); }
 
 /* "More" drop-down in the minor list */
