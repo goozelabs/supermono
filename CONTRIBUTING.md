@@ -29,7 +29,7 @@ You need Node and `npx`; there is nothing to install.
    ```sh
    bash build.sh
    node scripts/contrast.mjs
-   node --test scripts/
+   node --test scripts/*.test.mjs
    ```
 
 4. Commit the rebuilt `dist/*.css` with your `src/` change. Pages publishes

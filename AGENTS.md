@@ -11,7 +11,7 @@ Pure-CSS theme for private trackers (BTN, PTP), loaded through each site's
 - `node scripts/dev.mjs`: watch + rebuild, serve fixtures at
   `http://localhost:3000/fixtures/`.
 - `node scripts/contrast.mjs`: WCAG AA check; exits 1 on any failure.
-- `node --test scripts/`: tests for `scrub.mjs`.
+- `node --test scripts/*.test.mjs`: tests for `scrub.mjs`.
 
 A change is done when `build.sh` and `contrast.mjs` pass and the rebuilt
 `dist/*.css` is committed together with its `src/` change.
