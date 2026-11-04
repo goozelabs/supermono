@@ -2,14 +2,21 @@
    scale everything down. Phones and tablets both report 980px, so phones are told apart
    by screen size: a coarse pointer and a device width of 600px or less (deprecated but
    widely supported, and unlike the viewport it does not change when the keyboard opens).
-   There, zoom 2 brings text back to size and the narrow layout applies. Media queries ignore
-   zoom, so narrow rules are written as: a narrow window with a mouse, OR a phone. */
+   There, zoom brings text back to size and the narrow layout applies. Media queries ignore
+   zoom, so narrow rules are written as: a narrow window with a mouse, OR a phone.
+   In portrait the zoom is 980 / screen width, so 1 CSS px is one screen point, the same
+   scale BTN gets from its viewport; CSS can't divide by the width, so it steps by common
+   iPhone widths (iOS reports the portrait width in either orientation). Landscape keeps 2. */
 @media (pointer: coarse) and (max-device-width: 600px) {
   html { zoom: 2; }
   button, input[type=submit], input[type=button],
   input:not([type=checkbox], [type=radio], [type=hidden], [type=image], [type=file]), select { min-height: 28px; }
   input, select, textarea { font-size: 16px; } /* no iOS focus-zoom */
 }
+@media (pointer: coarse) and (orientation: portrait) and (max-device-width: 384px) { html { zoom: 2.6; } }  /* 375 */
+@media (pointer: coarse) and (orientation: portrait) and (min-device-width: 385px) and (max-device-width: 397px) { html { zoom: 2.5; } }  /* 390, 393 */
+@media (pointer: coarse) and (orientation: portrait) and (min-device-width: 398px) and (max-device-width: 420px) { html { zoom: 2.4; } }  /* 402, 414 */
+@media (pointer: coarse) and (orientation: portrait) and (min-device-width: 421px) and (max-device-width: 600px) { html { zoom: 2.25; } }  /* 428, 430, 440 */
 
 @media (max-width: 760px) and (pointer: fine), (pointer: coarse) and (max-device-width: 600px) {
   /* Header, matching BTN's: stats strip on top with the Bonus link (its total) pinned at
