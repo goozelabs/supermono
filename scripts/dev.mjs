@@ -27,7 +27,7 @@ const build = () => {
     if (queued) { queued = false; build(); }
   });
 };
-watch(join(root, 'src'), () => { clearTimeout(timer); timer = setTimeout(build, 100); });
+watch(join(root, 'src'), { recursive: true }, () => { clearTimeout(timer); timer = setTimeout(build, 100); });
 build();
 
 spawn('npx', ['--yes', 'browser-sync@3.0.4', 'start', '--server', '--files', 'dist/*.css',
