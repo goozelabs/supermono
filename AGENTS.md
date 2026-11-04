@@ -23,6 +23,9 @@ The repo is published anonymously. Every committed byte is public.
 - Commit only hand-written content. Usernames, passkeys, tokens, emails,
   page text or markup copied from captures, and local paths stay out of
   files, commits, PRs and issues.
+- Name trackers by acronym (BTN, PTP) in docs, comments and commits.
+  Hostnames live only in gitignored `fixtures/hosts.json`; full names
+  appear only where the theme displays them or loads site assets.
 - `fixtures/captured/` (gitignored) holds other members' data. Read it to
   write selectors; describe what you need in the shape of
   `docs/markup-skeleton*.md` (tags, ids, classes, no text or values).
@@ -59,8 +62,9 @@ pinned. Scripts are plain Node ESM.
 
 ## Adding a tracker
 
-Add it to `build.sh`'s loop, `TRACKERS` in `scripts/dev.mjs` and
-`scripts/scrub.mjs`, and the picker in `fixtures/index.html`, then create
+Add it to `build.sh`'s loop, `TRACKERS` in `scripts/dev.mjs`, the picker
+in `fixtures/index.html`, and its host to the local, gitignored
+`fixtures/hosts.json` (hostnames never go in the repo), then create
 `src/<t>/` with the same file split. Before scrubbing its captures, run
 `node scripts/scrub.mjs --shapes` and extend the secret patterns to cover
 everything it lists. Capture workflow: `docs/dev-fixtures.md`.

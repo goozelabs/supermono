@@ -27,7 +27,15 @@ Leave scripts blocked (the default), so captures never contact the site.
    node scripts/scrub.mjs ~/Downloads/*.html
    ```
 
-   The tracker comes from SingleFile's `url:` header; other sites are refused.
+   The tracker comes from SingleFile's `url:` header, looked up in
+   `fixtures/hosts.json` (gitignored, so hostnames stay out of the repo).
+   Create it once, mapping each site's host to its tracker code:
+
+   ```json
+   { "<btn host>": "btn", "<ptp host>": "ptp" }
+   ```
+
+   Other sites are refused, and without the file every capture is.
    This blanks passkeys, `authkey`/`torrent_pass`/`auth` tokens, long hex
    strings (IRC key, hashes) and, on PTP, the anti-CSRF token and API
    user/key; removes the inlined supermono stylesheet (and PTP's theme); links

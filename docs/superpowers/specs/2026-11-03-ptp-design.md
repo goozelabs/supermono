@@ -3,8 +3,8 @@
 ## Intent
 
 supermono is a pure-CSS theme loaded through a tracker's "external
-stylesheet" profile setting. Today it targets only BroadcasTheNet (BTN).
-This adds PassThePopcorn (PTP): a full stylesheet that makes PTP look like
+stylesheet" profile setting. Today it targets only BTN.
+This adds PTP: a full stylesheet that makes PTP look like
 the BTN sheet as closely as the markup allows. It is the first step towards
 supermono being one theme across several trackers (RED, OPS later).
 
@@ -88,7 +88,7 @@ tracker, labelling output by tracker.
 ### Scrubbing captures
 
 `scripts/scrub.mjs` detects the tracker from the SingleFile header comment
-(`url: https://broadcasthe.net/…` / `url: https://passthepopcorn.me/…`) and
+(`url:` line with the BTN or PTP host) and
 refuses any file whose tracker it doesn't recognise (fail closed; raw file
 kept). Per tracker it applies that tracker's secret patterns (PTP passkey,
 announce host, auth/anti-CSRF tokens as found in real captures), its

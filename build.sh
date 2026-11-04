@@ -4,7 +4,7 @@
 #   dist/<t>.css        follows the OS (prefers-color-scheme)
 #   dist/<t>-dark.css   always dark
 #   dist/<t>-light.css  always light
-# for t in btn (BroadcasTheNet) and ptp (PassThePopcorn).
+# for t in btn (BTN) and ptp (PTP).
 # Trackers load one stylesheet URL, so "switching" means picking a URL in site settings.
 # Colours are all `light-dark()`, so forcing a scheme only changes `color-scheme`
 # and how the one `@media (prefers-color-scheme: light)` block (BTN: the vader

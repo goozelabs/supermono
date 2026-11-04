@@ -2,3 +2,5 @@
 dist/*.src.css
 # Scrubbed page captures: other members' data, never published
 fixtures/captured/
+# Tracker hostnames for scripts/scrub.mjs, kept out of the public repo
+fixtures/hosts.json

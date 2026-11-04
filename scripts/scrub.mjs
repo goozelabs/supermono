@@ -11,8 +11,12 @@ import { readFileSync, writeFileSync, unlinkSync, existsSync, mkdirSync } from '
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { dirname, join, relative } from 'node:path';
 
-const out = join(dirname(fileURLToPath(import.meta.url)), '..', 'fixtures', 'captured');
-const TRACKERS = { 'broadcasthe.net': 'btn', 'passthepopcorn.me': 'ptp' };
+const fixtures = join(dirname(fileURLToPath(import.meta.url)), '..', 'fixtures');
+const out = join(fixtures, 'captured');
+// Tracker hostnames stay out of the public repo: fixtures/hosts.json (gitignored) maps each
+// host to its tracker code, e.g. { "<host>": "btn" }. Without it every capture is refused.
+const HOSTS = join(fixtures, 'hosts.json');
+const loadHosts = () => (existsSync(HOSTS) ? JSON.parse(readFileSync(HOSTS, 'utf8')) : {});
 // PTP drops its whole theme (one normalize-scss-based sheet) when an external stylesheet is set.
 const PTP_THEME = /^\s*\/\*! normalize-scss/;
 // PTP secrets beyond the shared patterns: the passkey isn't hex, the anti-CSRF token is also a
@@ -44,7 +48,7 @@ const ptpLeftover = (html) => {
 const SECRET_PARAMS = /\b(authkey|torrent_pass|passkey|auth|token)=([^&"'\s<>]+)/gi;
 const HEX = /\b[0-9a-f]{24,}\b/gi; // IRC key, auth hashes
 // The passkey is 32 mixed-case alphanumerics, embedded in URLs: feed=torrents_notify_<passkey>,
-// landof.tv/<passkey>/announce. Only link/form/input values are searched, so data: URIs survive.
+// <BTN announce host>/<passkey>/announce. Only link/form/input values are searched, so data: URIs survive.
 const URL_ATTR = /\b(href|action|value)="(?!data:)([^"]*)"/gi;
 const KEY32 = /(?<![A-Za-z0-9])[A-Za-z0-9]{32}(?![A-Za-z0-9])/g;
 const TOKEN_INPUT = /<input\b[^>]*\bname="(?:auth|authkey|token|csrf|passkey)[^"]*"[^>]*>/gi;
@@ -52,10 +56,13 @@ const EMAIL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g;
 const LEFTOVER = /\b(?:authkey|torrent_pass|passkey)=(?!REDACTED)|torrents_notify_(?!REDACTED)|\/[A-Za-z0-9]{32}\/announce/i;
 const OURS = ':root:root'; // first selector of src/00-tokens.css
 
-export function detectTracker(html) {
+export function detectTracker(html, hosts = loadHosts()) {
+  if (!Object.keys(hosts).length) throw new Error('no hosts in fixtures/hosts.json');
   const host = html.slice(0, 4096).match(/^\s*url: https?:\/\/([^/\s]+)\//m)?.[1];
-  const tracker = TRACKERS[host];
+  const tracker = Object.hasOwn(hosts, host) ? hosts[host] : undefined;
   if (!tracker) throw new Error('unknown tracker');
+  // The code names the output folder: keep it a plain word.
+  if (!/^[a-z]+$/.test(tracker)) throw new Error('bad tracker code in fixtures/hosts.json');
   return tracker;
 }
 
@@ -87,8 +94,8 @@ export function shapes(html) {
   return [...seen].map(([k, n]) => `${k} ${n}`).sort();
 }
 
-export function scrub(html) {
-  const tracker = detectTracker(html);
+export function scrub(html, hosts) {
+  const tracker = detectTracker(html, hosts);
   html = html
     .replace(SECRET_PARAMS, '$1=REDACTED')
     .replace(HEX, 'REDACTED')

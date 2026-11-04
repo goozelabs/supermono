@@ -1,9 +1,9 @@
 # supermono
 
-A clean, modern light and dark theme for BroadcasTheNet (BTN) and
-PassThePopcorn (PTP). Pure CSS: no userscript, nothing to install.
+A clean, modern light and dark theme for Gazelle-based trackers. Pure CSS:
+no userscript, nothing to install.
 
-Each tracker gets one stylesheet in three flavours:
+Each supported tracker gets one stylesheet in three flavours:
 
 - **Auto**: follows your system light/dark setting
 - **Dark**: always dark
@@ -14,26 +14,14 @@ the full width of your screen and reflows on narrow windows and phones.
 
 ## Install
 
-Paste one URL into your profile's external stylesheet field and save.
-Updates apply automatically.
+In your tracker's profile settings, paste one URL into the external
+stylesheet field and save. Updates apply automatically. To remove the
+theme, clear the field.
 
-BTN (Edit Profile → Layout):
-
-| Flavour | URL |
-| --- | --- |
-| Auto | `https://goozelabs.github.io/supermono/btn.css` |
-| Dark | `https://goozelabs.github.io/supermono/btn-dark.css` |
-| Light | `https://goozelabs.github.io/supermono/btn-light.css` |
-
-PTP (profile settings):
-
-| Flavour | URL |
-| --- | --- |
-| Auto | `https://goozelabs.github.io/supermono/ptp.css` |
-| Dark | `https://goozelabs.github.io/supermono/ptp-dark.css` |
-| Light | `https://goozelabs.github.io/supermono/ptp-light.css` |
-
-To remove it, clear the field.
+| Tracker | Auto | Dark | Light |
+| --- | --- | --- | --- |
+| btn | `https://goozelabs.github.io/supermono/btn.css` | `https://goozelabs.github.io/supermono/btn-dark.css` | `https://goozelabs.github.io/supermono/btn-light.css` |
+| ptp | `https://goozelabs.github.io/supermono/ptp.css` | `https://goozelabs.github.io/supermono/ptp-dark.css` | `https://goozelabs.github.io/supermono/ptp-light.css` |
 
 ## Bugs and contributing
 
