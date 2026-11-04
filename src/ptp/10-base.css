@@ -47,8 +47,10 @@ blockquote {
 ::selection { background: color-mix(in srgb, var(--accent) 35%, transparent); }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 
-/* Helpers used by site markup; site JS toggles .hidden */
-.hidden { display: none !important; }
+/* Helpers used by site markup. Site JS either drops .hidden or shows the element with an
+   inline display (jQuery .show()); so no !important, but `html` lifts it above the
+   single-class display rules in later files. */
+html .hidden { display: none; }
 .clearfix::after { content: ""; display: table; clear: both; }
 .text--center, .center { text-align: center; }
 .text--right, .right { text-align: right; }

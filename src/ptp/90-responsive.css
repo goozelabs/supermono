@@ -1,16 +1,17 @@
 /* PTP has no <meta viewport>, so phones lay out at the browser default (~980px) and
    scale everything down. Phones and tablets both report 980px, so phones are told apart
-   by shape: a coarse pointer on a tall portrait viewport (height >= 1.5x width). There,
-   zoom 2 brings text back to size and the narrow layout applies. Media queries ignore
+   by screen size: a coarse pointer and a device width of 600px or less (deprecated but
+   widely supported, and unlike the viewport it does not change when the keyboard opens).
+   There, zoom 2 brings text back to size and the narrow layout applies. Media queries ignore
    zoom, so narrow rules are written as: a narrow window with a mouse, OR a phone. */
-@media (pointer: coarse) and (max-aspect-ratio: 2/3) {
+@media (pointer: coarse) and (max-device-width: 600px) {
   html { zoom: 2; }
   button, input[type=submit], input[type=button],
   input:not([type=checkbox], [type=radio], [type=hidden], [type=image], [type=file]), select { min-height: 28px; }
   input, select, textarea { font-size: 16px; } /* no iOS focus-zoom */
 }
 
-@media (max-width: 760px) and (pointer: fine), (pointer: coarse) and (max-aspect-ratio: 2/3) {
+@media (max-width: 760px) and (pointer: fine), (pointer: coarse) and (max-device-width: 600px) {
   #userinfo { grid-template-columns: minmax(0, 1fr); grid-template-areas: "stats" "minor" "username" "major"; }
   #userinfo ul, #userinfo_minor { justify-content: flex-start; }
   #userinfo_username { justify-self: start; }
@@ -28,11 +29,12 @@
   .cover-movie-list { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
 }
 
-@media (max-width: 520px) and (pointer: fine), (pointer: coarse) and (max-aspect-ratio: 2/3) {
+@media (max-width: 520px) and (pointer: fine), (pointer: coarse) and (max-device-width: 600px) {
   .forum-post__avatar-and-body { flex-direction: column; }
   .forum-post__avatar { display: flex; align-items: center; gap: 10px; padding: 8px 12px 0; text-align: left; }
   .forum-post__avatar__image { max-width: 56px; }
   /* Wide torrent and request tables scroll sideways instead of squashing */
-  :is(.torrent_table, #request_table) { display: block; overflow-x: auto; }
+  /* :where keeps the id at zero specificity so `html .hidden` still hides list tables */
+  :where(.torrent_table, #request_table) { display: block; overflow-x: auto; }
   .basic-movie-list__torrent-row .torrent-info-link { white-space: normal; overflow-wrap: anywhere; }
 }
