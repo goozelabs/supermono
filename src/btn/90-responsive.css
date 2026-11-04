@@ -167,6 +167,17 @@
   /* On touch, each tag group is just its heading (plus tags you selected or excluded) until
      tapped; tapping another group closes it. Same first-tap :hover reveal as the ☰ menu. */
   @media (pointer: coarse) {
+    /* Each tag is a segmented control: + (include) and − (exclude) are full-height 36pt
+       squares at its ends with dividers, the name between, so a tap can't land on the
+       wrong one or on the next tag (they were 20x16 links packed against the name). */
+    body .filter_torrents .tag_container { gap: 8px; }
+    body .filter_torrents .tag_container > div { align-items: stretch; min-height: 36px; padding: 0; overflow: hidden; }
+    body .filter_torrents .tag_container > div > a:is([title="Include tag"], [title="Exclude tag"]) {
+      flex: none; display: flex; align-items: center; justify-content: center; width: 36px;
+    }
+    body .filter_torrents .tag_container > div > a[title="Include tag"] { border-right: 1px solid var(--line); }
+    body .filter_torrents .tag_container > div > a[title="Exclude tag"] { border-left: 1px solid var(--line); }
+    body .filter_torrents .tag_container > div > a.tag-text { display: flex; align-items: center; padding: 0 10px; }
     /* each heading is a full-width bar so it reads as a control; accent when open */
     .filter_torrents .box > table:not(.cat_list) > tbody > tr.tag_row > td.label { /* beats the cell reset above */
       display: flex; align-items: center; min-height: 40px; padding: 0 12px; cursor: pointer;
