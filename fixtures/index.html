@@ -16,12 +16,18 @@
 </head>
 <body>
 <header>
+  <label>Tracker
+    <select id="tracker">
+      <option value="btn">BTN</option>
+      <option value="ptp">PTP</option>
+    </select>
+  </label>
   <label>Page <select id="page"></select></label>
   <label>Theme
     <select id="theme">
-      <option value="btn">auto (OS)</option>
-      <option value="btn-dark">dark</option>
-      <option value="btn-light">light</option>
+      <option value="">auto (OS)</option>
+      <option value="-dark">dark</option>
+      <option value="-light">light</option>
     </select>
   </label>
   <label>Width
@@ -42,27 +48,40 @@ const store = {
   set: (k, v) => { try { localStorage.setItem('fx-' + k, v); } catch {} },
 };
 
+// Captures and touch.html link /dist/<tracker>.css (touch.html relatively); swap in the chosen variant.
 function applyTheme() {
   const doc = $('frame').contentDocument;
-  const link = doc && doc.querySelector('link[href*="dist/btn"]');
-  if (link) link.href = link.href.replace(/btn(-dark|-light)?\.css/, $('theme').value + '.css');
+  const link = doc && doc.querySelector('link[href*="dist/"]');
+  if (link) link.href = link.href.replace(/[a-z]+(-dark|-light)?\.css$/, $('tracker').value + $('theme').value + '.css');
 }
 function applyWidth() {
   $('frame').style.width = $('width').value ? $('width').value + 'px' : '100%';
 }
 
-(async () => {
-  let pages = [];
-  try { pages = (await (await fetch('captured/index.json')).json()).map((f) => 'captured/' + f); }
-  catch { $('note').textContent = 'No captures listed: run node scripts/dev.mjs and scrub some pages.'; }
-  for (const p of [...pages, 'touch.html']) $('page').add(new Option(p.replace(/^captured\/|\.html$/g, ''), p));
+let index = {};
+function listPages() {
+  const t = $('tracker').value;
+  const pages = (index[t] ?? []).map((f) => `captured/${t}/${f}`);
+  if (t === 'btn') pages.push('touch.html');
+  $('page').replaceChildren(...pages.map((p) => new Option(p.replace(/^captured\/\w+\/|\.html$/g, ''), p)));
+}
+function restore(id) {
+  const saved = store.get(id);
+  if (saved && [...$(id).options].some((o) => o.value === saved)) $(id).value = saved;
+}
 
-  for (const id of ['page', 'theme', 'width']) {
-    const saved = store.get(id);
-    if (saved && [...$(id).options].some((o) => o.value === saved)) $(id).value = saved;
+(async () => {
+  try { index = await (await fetch('captured/index.json')).json(); }
+  catch { $('note').textContent = 'No captures listed: run node scripts/dev.mjs and scrub some pages.'; }
+  restore('tracker');
+  listPages();
+
+  for (const id of ['tracker', 'page', 'theme', 'width']) {
+    if (id !== 'tracker') restore(id);
     $(id).addEventListener('change', () => {
       store.set(id, $(id).value);
-      if (id === 'page') $('frame').src = $('page').value;
+      if (id === 'tracker') { listPages(); store.set('page', $('page').value); }
+      if (id === 'tracker' || id === 'page') $('frame').src = $('page').value;
       if (id === 'theme') applyTheme();
       if (id === 'width') applyWidth();
     });
