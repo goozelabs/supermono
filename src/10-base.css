@@ -1,0 +1,73 @@
+/* Base elements. The SMPTE theme is replaced, so nothing is inherited. */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: var(--fs) / 1.45 var(--font);
+}
+
+a { color: var(--link); text-decoration: none; }
+a:hover { color: var(--accent-hover); text-decoration: underline; text-underline-offset: 2px; }
+img { max-width: 100%; height: auto; border: 0; }
+
+h1, h2, h3, h4 { margin: 0 0 .5em; line-height: 1.25; font-weight: 600; }
+h2 { font-size: 1.5em; text-align: center; }
+h3 { font-size: 1.2em; text-align: center; }
+h4 { font-size: 1em; }
+p { margin: 0 0 .75em; }
+ul, ol { margin: 0 0 .75em; padding-left: 1.4em; }
+li { margin: 2px 0; }
+hr { border: 0; border-top: 1px solid var(--line); margin: var(--gap) 0; }
+
+ul.nobullet, ul.stats, ul.poll { list-style: none; padding: 0; }
+ul.thin { margin-left: 1.5em; }
+ul.thin li { margin: 0; }
+
+/* BBCode output is wrapped in <pre>; it must wrap like prose. */
+pre {
+  margin: 0 0 .75em;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font: inherit;
+}
+code, pre code { font-family: var(--mono); }
+blockquote {
+  margin: .5em 0;
+  padding: .5em .9em;
+  border-left: 3px solid var(--line-strong);
+  background: var(--bg-sunken);
+}
+.signature { margin-top: 2em; padding-top: .5em; border-top: 1px dotted var(--line-strong); }
+
+/* BBCode [size=N] output */
+span.size1 { font-size: .75em; }
+span.size2 { font-size: 1em; }
+span.size3 { font-size: 1.25em; }
+span.size4 { font-size: 1.5em; }
+span.size5 { font-size: 1.75em; }
+span.size6 { font-size: 2em; }
+span.size7 { font-size: 2.25em; }
+span.size8 { font-size: 2.5em; }
+span.size9 { font-size: 2.75em; }
+span.size10 { font-size: 3em; }
+
+::selection { background: color-mix(in srgb, var(--accent) 35%, transparent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+/* Helpers used by site markup */
+.hidden { position: absolute; left: -10000px; }
+input.hidden { display: none; }
+.hide { display: none; }
+.center { text-align: center; }
+.right { text-align: right; }
+.number { text-align: right; font-variant-numeric: tabular-nums; }
+.nobr { white-space: nowrap; }
+.pad { padding: var(--gap); }
+.min_padding { margin: 0; padding: 0; }
+.vertical_space { margin-bottom: var(--gap); }
+.noborder { border: 0; }
+.unimportant { color: var(--fg-muted); }

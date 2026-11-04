@@ -1,0 +1,70 @@
+/* Semantic colours: user classes, ratio, torrent format.
+   Hue families follow the SMPTE theme; each value is `light-dark(on-light, on-dark)`
+   and is checked for WCAG AA by scripts/contrast.mjs.
+   `body` prefix: global.css defines .permission_43 after this file. */
+
+/* Staff (green) */
+body a.permission_15, body .permission_15, body a.permission_42, body .permission_42,
+body a.permission_1, body .permission_1, body a.permission_31, body .permission_31 { color: light-dark(#13722f, #5df07a); font-weight: 700; }
+body a.permission_14, body .permission_14, body a.permission_36, body .permission_36 { color: light-dark(#1a6e34, #7df08f); }
+body a.permission_11, body .permission_11 { color: light-dark(#236e3c, #a6f2a8); }
+
+/* Helpers (blue) */
+body a.permission_32, body .permission_32, body a.permission_26, body .permission_26,
+body a.permission_29, body .permission_29, body a.permission_30, body .permission_30,
+body a.permission_34, body .permission_34 { color: light-dark(#1a5fd0, #5c9bff); }
+
+/* Rank progression */
+body a.permission_2, body .permission_2 { color: var(--fg); }
+body a.permission_3, body .permission_3 { color: var(--fg-muted); }
+body a.permission_4, body .permission_4 { color: light-dark(#705f00, #fff09a); }
+body a.permission_5, body .permission_5 { color: light-dark(#7d6100, #ffe83a); }
+body a.permission_24, body .permission_24 { color: light-dark(#a8440c, #ff8a47); }
+body a.permission_7, body .permission_7 { color: light-dark(#c4260f, #ff5a3d); }
+body a.permission_33, body .permission_33 { color: light-dark(#a8128f, #ff63e6); }
+
+/* Special (purple family) */
+body a.permission_38, body .permission_38, body a.permission_37, body .permission_37,
+body a.permission_6, body .permission_6, body a.permission_9, body .permission_9,
+body a.permission_35, body .permission_35 { color: light-dark(#6a28c9, #b38cff); }
+body a.permission_8, body .permission_8 { color: light-dark(#7a3fd0, #c0a2ff); }
+body a.permission_28, body .permission_28, body a.permission_43, body .permission_43 { color: light-dark(#8e1fa6, #d27be8); }
+
+/* Ratio */
+.r00 { color: var(--bad) !important; }
+.r01, .r02, .r03 { color: light-dark(#b82c0d, #ff5f3d); }
+.r04, .r05, .r06 { color: var(--orange); }
+.r07, .r08, .r09 { color: var(--warn); }
+.r10 { color: light-dark(#3f6d0c, #8ed03a); }
+.r20, .r50 { color: var(--good); }
+.r99 { color: var(--good) !important; }
+
+/* Highlight Torrents: site sets pure #0f0/#ff0/#f00 inline, unreadable on light surfaces */
+.tor_highlight_leech { color: var(--good) !important; }
+.tor_highlight_seed { color: var(--warn) !important; }
+.tor_highlight_snatch { color: var(--bad) !important; }
+a.tor_highlight_leech, a.tor_highlight_seed, a.tor_highlight_snatch { font-weight: 600; }
+
+/* Torrent format / source */
+.TS { color: light-dark(#b30090, #ff5fd8); }
+.MPEG { color: light-dark(#c4003f, #ff5c8a); }
+.MP4 { color: light-dark(#b00000, #ff6b5e); }
+.MKV { color: light-dark(#bd3000, #ff7a45); }
+.M4V { color: light-dark(#a84e00, #ff9a3d); }
+.AVI { color: light-dark(#8a5c00, #ffc247); }
+.Internal { color: light-dark(#266f00, #7dff4a); }
+.None, .\0D\0D\0D { color: light-dark(#a8444c, #e89ba0); }
+.P2P { color: light-dark(#7d4a9e, #c9a2e6); }
+.Scene { color: light-dark(#2a6e53, #95ccb6); }
+.User { color: light-dark(#6e6200, #faf18b); }
+
+/* log.css (loads after this file) */
+body pre, body blockquote { color: inherit; }
+body pre { background: none; }
+body blockquote { background: var(--bg-sunken); }
+body .log1 { color: light-dark(#7a2a9e, #c88cff); }
+body .log2 { color: light-dark(#7d6100, #ffe83a); }
+body .log3 { color: var(--info); }
+body .good, body .goodish { color: var(--good); }
+body .bad { color: var(--bad); }
+body .badish { color: var(--warn); }

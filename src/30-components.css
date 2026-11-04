@@ -1,0 +1,168 @@
+/* Components: boxes, tables, forms, alerts, bbcode editor.
+   Rules that collide with global.css/log.css are prefixed with `body`
+   (+1 element specificity) because those files load after this one. */
+
+/* Boxes */
+.box {
+  margin: 0 0 var(--gap);
+  background: var(--surface-bg);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius);
+  box-shadow: var(--surface-shadow);
+  overflow-x: auto; /* clips corners; wide content scrolls instead of being cut off */
+}
+.head, .colhead_dark.head {
+  padding: 7px 12px;
+  background: var(--bg-head);
+  border-bottom: 1px solid var(--line);
+  font-weight: 600;
+}
+.head a { color: var(--fg); }
+.head .sign { font-weight: 700; }
+.body, .extrapad { padding: var(--gap); }
+.box > ul.stats { padding: 6px 12px; }
+.sidebar .box, .main_column .box { margin-bottom: var(--gap); }
+
+/* Tables */
+table { width: 100%; border-collapse: collapse; }
+td, th { padding: var(--cell-y) var(--cell-x); vertical-align: middle; text-align: left; }
+th { font-weight: 600; }
+td.label { width: 1%; white-space: nowrap; font-weight: 600; text-align: right; }
+td.tdleft { text-align: left; }
+td.tdcenter { text-align: center; }
+td.tdright { text-align: right; }
+
+:is(.torrent_table, table.border, table:has(> tbody > tr:is(.colhead, .colhead_dark, .forum_group_header))) {
+  border: 1px solid var(--line);
+  background: var(--bg-raised);
+}
+/* :where keeps this at (0,0,4) so page rules (forum_post, global.css) can drop the line */
+:where(.torrent_table, table.border, table:has(> tbody > tr:is(.colhead, .colhead_dark, .forum_group_header))) > tbody > tr + tr > td {
+  border-top: 1px solid var(--line);
+}
+tr.colhead, tr.colhead_dark, tr.forum_group_header { background: var(--bg-head); font-weight: 600; }
+tr.colhead a, tr.colhead_dark a { color: var(--fg); }
+tr.rowa { background: var(--bg-raised); }
+tr.rowb { background: color-mix(in srgb, var(--bg-hover) 45%, var(--bg-raised)); }
+tr.torrent:hover, tr.group_torrent:hover, tr.rowa:hover, tr.rowb:hover { background: var(--bg-hover); }
+tr.unreadpm { background: var(--warn-bg); }
+td.group, .torrent_table .group { background: var(--bg-sunken); }
+.colhead .sign, .colhead_dark .sign { text-align: center; width: 1%; }
+
+/* Forms */
+input:not([type=checkbox], [type=radio], [type=submit], [type=button], [type=reset], [type=image], [type=file], [type=range], [type=color], [type=hidden]),
+select, textarea {
+  font: inherit;
+  color: var(--fg);
+  background: var(--bg-sunken);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  padding: 4px 8px;
+  min-width: 0;
+  max-width: 100%;
+}
+input:not([type=checkbox], [type=radio], [type=submit], [type=button], [type=reset], [type=image], [type=file], [type=range], [type=color], [type=hidden]):hover,
+select:hover, textarea:hover { border-color: var(--fg-muted); }
+input:focus, select:focus, textarea:focus { border-color: var(--accent); outline-offset: 0; }
+::placeholder { color: var(--fg-muted); opacity: .8; }
+input[type=checkbox], input[type=radio], input[type=range] { accent-color: var(--accent); }
+textarea { resize: vertical; }
+/* Own chevron: the native caret sits against the border. Each gradient draws one
+   currentColor stroke (left "\", right "/") across its square. */
+select:not([multiple]) {
+  appearance: none;
+  padding-right: 28px;
+  background-image:
+    linear-gradient(45deg, transparent 38%, currentColor 38% 62%, transparent 62%),
+    linear-gradient(135deg, transparent 38%, currentColor 38% 62%, transparent 62%);
+  background-position: right 15px center, right 10px center;
+  background-size: 5px 5px;
+  background-repeat: no-repeat;
+}
+
+button, .button, input[type=submit], input[type=button], input[type=reset] {
+  font: inherit;
+  color: var(--fg);
+  background: var(--bg-hover);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  padding: 4px 12px;
+  cursor: pointer;
+}
+button:hover, .button:hover, input[type=submit]:hover, input[type=button]:hover, input[type=reset]:hover {
+  border-color: var(--accent);
+  color: var(--accent-hover);
+}
+button:active, .button:active, input[type=submit]:active { background: var(--bg-head); }
+body a.bbcode_button { background: var(--accent); color: var(--accent-fg) !important; border-radius: var(--radius-sm); }
+body a.bbcode_button:hover { filter: none; background: var(--accent-hover); }
+
+/* Alerts */
+.alertbar, .save_message, .error_message, .newmem, .welcome {
+  margin: 0 0 8px;
+  padding: 8px 12px;
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-sm);
+  text-align: left;
+  font-weight: 600;
+}
+.alertbar { width: auto; }
+.alertbar a { color: var(--fg); text-decoration: underline; }
+body .alertbar.blend { background: var(--bg-raised); }
+body .alertbar.success { background: var(--good-bg) !important; border: 1px solid var(--good) !important; border-left-width: 3px !important; }
+body .alertbar.error, .error_message { background: var(--bad-bg) !important; border: 1px solid var(--bad) !important; border-left-width: 3px !important; }
+.save_message { background: var(--warn-bg); border-left-color: var(--warn); }
+.error_message, .save_message { text-align: center; }
+.elem_error { border: 2px solid var(--bad); }
+.linkbox { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 10px; padding: 6px 0; text-align: center; }
+
+/* Profile-settings tab strip (coda-slider.css loads after us and sets white links) */
+body ul.navigation {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+  margin: 0 0 var(--gap);
+  padding: 4px;
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+body ul.navigation li { display: block; margin: 0; }
+body ul.navigation a { display: block; padding: 6px 14px; color: var(--fg); border-radius: var(--radius-sm); }
+body ul.navigation a:hover { background: var(--bg-hover); color: var(--accent-hover); text-decoration: none; }
+body ul.navigation a.selected { background: var(--accent); color: var(--accent-fg); }
+body ul.navigation a:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+/* Legacy rounded-box spacers: the corner rows are pure decoration. */
+b.b1h, b.b2h, b.b3h, b.b4h, b.b2bh, b.b3bh, b.b4bh { display: none; }
+
+/* BBCode editor */
+body div.bbcode-btntoolbar, body div.bbcode-smileys {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px;
+  height: auto;
+  padding: 4px;
+  background: var(--bg-head);
+  border: 0;
+  text-align: left;
+}
+body .headh { background: var(--bg-head); border: 1px solid var(--line-strong); border-bottom: 0; border-radius: var(--radius-sm) var(--radius-sm) 0 0; }
+body .headh h3 { margin: 0; padding: 4px 8px; }
+body .contenth { background: var(--bg-sunken); color: var(--fg); border: 1px solid var(--line-strong); border-radius: 0 0 var(--radius-sm) var(--radius-sm); }
+body .contenth div { margin: 0; padding: 0; }
+body div.contenth textarea { width: 100%; height: 150px; background: transparent; color: var(--fg); border: 0; font-size: var(--fs); }
+body .bbcode-btn, body .bbcode-btnsmileys { padding: 3px; margin: 0; border-radius: var(--radius-sm); cursor: pointer; }
+body .bbcode-btnhover, body .bbcode-btnsmileyshover { background: var(--bg-hover); border: 0; border-radius: var(--radius-sm); padding: 3px; margin: 0; }
+
+/* Tag filter grid (global.css) */
+body .tag_container div { background: var(--bg-sunken); border: 1px solid var(--line-strong); border-radius: var(--radius-sm); opacity: .8; }
+body .tag_container div:hover { border-color: var(--fg-muted); opacity: 1; }
+body .tag_container div.selected { border-color: var(--info); opacity: 1; }
+body .tag_container div.negated { border-color: var(--bad); opacity: 1; }
+body .tag_container i.fa-circle-plus:hover, body .tag_container div.selected i.fa-circle-plus { color: var(--info); }
+body .tag_container i.fa-circle-minus:hover, body .tag_container div.negated i.fa-circle-minus { color: var(--bad); }

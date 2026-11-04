@@ -1,0 +1,4 @@
+.DS_Store
+dist/*.src.css
+# Scrubbed page captures: other members' data, never published
+fixtures/captured/

@@ -1,0 +1,33 @@
+/* BTN ships <meta viewport content="width=device-width, initial-scale=0.5">:
+   phones lay out at ~2x device width (~780px), so everything renders half-size.
+   On touch devices, zoom 2 cancels that. Media queries see the doubled viewport
+   and container queries measure unzoomed width too, so phone breakpoints are
+   written as: a narrow window with a mouse, OR a coarse pointer under 900px
+   (a phone; tablets lay out at ~1600px and keep the desktop layout, zoomed). */
+@media (pointer: coarse) {
+  html { zoom: 2; }
+  button, .button, input[type=submit], input[type=button],
+  input:not([type=checkbox], [type=radio], [type=hidden], [type=image], [type=file]), select { min-height: 28px; }
+  /* no iOS focus-zoom; also beats the bbcode textarea and vader's `.ui-widget input` */
+  input, select, textarea,
+  body div.contenth textarea, body .ui-widget :is(input, select, textarea) { font-size: 16px; }
+}
+
+@media (max-width: 760px) and (pointer: fine), (pointer: coarse) and (max-width: 900px) {
+  #header { grid-template-columns: minmax(0, 1fr); grid-template-areas: "user" "logo" "don" "menu" "search" "alerts"; }
+  .thin:has(> .main_column) { grid-template-columns: minmax(0, 1fr); }
+  .thin:has(> .main_column) > .sidebar { grid-column: 1; }
+  .filter_torrents { max-width: none; }
+  td.avatar { width: 90px; }
+}
+
+@media (max-width: 520px) and (pointer: fine), (pointer: coarse) and (max-width: 900px) {
+  table.forum_post, table.forum_post > tbody, table.forum_post tr, table.forum_post td { display: block; width: auto; }
+  table.forum_post td.avatar { display: flex; align-items: center; gap: 10px; padding: 8px 12px; text-align: left; }
+  td.avatar img { max-width: 56px; }
+  /* Each tbody becomes its own table, so skip multi-tbody tables (series
+     discog) whose header and rows are in separate tbodies. */
+  .torrent_table:not(:has(> tbody + tbody)) { display: block; overflow-x: auto; }
+  .torrent_table:not(:has(> tbody + tbody)) > tbody { display: table; width: 100%; }
+  .torrent_table tr.torrent > td:nth-child(3) > div.nobr { white-space: normal; overflow-wrap: anywhere; }
+}

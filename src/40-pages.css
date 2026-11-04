@@ -1,0 +1,106 @@
+/* Page-specific layout: browse, series, forums, home. */
+
+/* Browse */
+.filter_torrents { max-width: 900px; margin: 0 auto var(--gap); }
+.filter_torrents .submit { padding-top: 6px; text-align: right; }
+.filter_torrents h3 { margin: 0 0 8px; }
+.cat_list td { padding: 2px 8px; border: 0; }
+.country_list table td { padding: 1px 6px; }
+.torrent_table td.center { text-align: center; }
+.torrent_table td img { vertical-align: middle; }
+/* Title cell: link line, [format] line, then Up/Added and Release Name lines */
+.torrent_table tr.torrent > td:nth-child(3) { line-height: 1.35; }
+.torrent_table tr.torrent > td:nth-child(3) > div.nobr { margin-top: 2px; font-size: var(--fs-sm); color: var(--fg-muted); }
+.torrent_table tr.torrent > td:nth-child(3) > div.nobr b { font-weight: 500; }
+.torrent_table tr.torrent > td > span, .torrent_table tr.group_torrent > td > span { float: right; margin-left: 8px; }
+.torrent_table tr.group_torrent > td > a > span { float: none; white-space: normal; }
+/* Series rows: the site breaks before "Subs / 5.1ch"; keep it on the format line */
+.torrent_table tr.group_torrent > td > a > br { display: none; }
+.torrent_table tr.group_torrent > td > a > br + span::before { content: "/\00a0"; }
+.torrent_table .year { float: right; color: var(--fg-muted); }
+.torrent_table .tags { padding-left: 0; font-style: normal; color: var(--fg-muted); }
+.season { color: var(--bad); }
+.episode { color: var(--info); }
+
+/* Series page: banner + vertical tab box */
+table#discog_table td.number { width: 1%; white-space: nowrap; }
+body .ui-tabs-vertical { width: auto; }
+#banner { display: block; margin: 0 auto var(--gap); border-radius: var(--radius); }
+table#discog_table { margin-bottom: var(--gap); }
+#summary .ui-tabs-vertical { display: flex; gap: var(--gap); padding: var(--gap); }
+#summary .ui-tabs-nav { display: flex; flex-direction: column; gap: 4px; margin: 0; padding: 0; list-style: none; }
+#summary .ui-tabs-nav li { margin: 0; }
+#summary .ui-tabs-panel { flex: 1; min-width: 0; padding: 0; border: 0; background: none; }
+#summary_votes_btn, [id^=summary_votes_] { margin-top: 6px; }
+
+/* Forums */
+/* separate borders: border-radius is ignored on collapsed tables */
+table.forum_post { margin: 0 0 var(--gap); border: 1px solid var(--line); border-collapse: separate; border-spacing: 0; border-radius: var(--radius); overflow: hidden; background: var(--bg-raised); }
+table.forum_post > tbody > tr + tr > td { border-top: 0; }
+table.forum_unread { border-color: var(--accent); }
+table.forum_post tr.colhead_dark td { padding: 6px 12px; }
+td.avatar { width: 170px; padding: 10px; vertical-align: top; text-align: center; }
+td.avatar img { max-width: 100%; }
+div.user_details { padding: 6px 0 0; font-size: var(--fs-sm); color: var(--fg-muted); }
+table.forum_post td.body { padding: 12px; vertical-align: top; }
+img.badge { max-height: 16px; vertical-align: text-bottom; }
+.postcontent { overflow-wrap: anywhere; }
+td.forum_name { width: 50%; }
+td.last_post { width: 30%; }
+td.topics, td.posts { width: 1%; text-align: right; }
+
+/* Edit profile: coda-slider panels (`#slider .panel`; ids like `section4.editprofile`) are
+   a fixed 580px inside an overflow:hidden strip, so anything wider is cut off. The IRC key
+   input (size=70) and the Paranoia select's long options pushed their tables past 580px. */
+#slider .panel td { overflow-wrap: anywhere; }
+#slider #irc_key, #slider #paranoia { width: 100%; }
+
+/* Bonus store (bonus.php): six offers in a 3x2 layout table with inline sizes and <br>
+   spacing; render them as a card grid with the action as a button at the bottom. */
+.thin > table:has(#lumen_exchange) { display: block; }
+.thin > table:has(#lumen_exchange) > tbody { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--gap); max-width: 900px; margin: 0 auto; }
+.thin > table:has(#lumen_exchange) tr { display: contents; }
+.thin > table:has(#lumen_exchange) td {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: auto !important;
+  height: auto !important;
+  padding: 16px !important;
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--fg-muted);
+}
+.thin > table:has(#lumen_exchange) td br { display: none; }
+.thin > table:has(#lumen_exchange) td strong { color: var(--fg); font-size: 1.1em; }
+.thin > table:has(#lumen_exchange) td > a:last-child {
+  margin-top: auto;
+  padding: 4px 16px;
+  color: var(--fg);
+  background: var(--bg-hover);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+}
+.thin > table:has(#lumen_exchange) td > a:last-child:hover { border-color: var(--accent); color: var(--accent-hover); text-decoration: none; }
+.thin > table:has(#lumen_exchange) td > a#send_button { background: none; border-color: transparent; color: var(--fg-muted); }
+
+/* Lumens store (store.php): items are absolutely placed on a 969x598 shelf image, with
+   coordinates the old fixed-width theme measured from #content. Make the scene their
+   containing block at native size; it scrolls sideways on narrow screens. */
+#content:has(> div[width="969px"]) { overflow-x: auto; }
+#content > div[width="969px"] { position: relative; width: 969px; margin: 0 auto; }
+
+/* News archive (body#news): announcement text is the main content, so size it up */
+#news div.box > div.pad { font-size: 15px; line-height: 1.55; }
+
+/* Home */
+.home .main_column .head { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
+.home .extrapad center { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 8px; }
+.of_the_month { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--gap); }
+.of_the_month > .box { margin: 0; }
+.of_the_month ul { font-size: 1.1em; }
+.month_rating { font-family: var(--font); font-size: 2.5em; font-weight: 800; }
+ul.stats li { padding: 1px 0; }
+.countdown_wrapper { font-size: 140%; }

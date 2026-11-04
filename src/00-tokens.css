@@ -1,0 +1,70 @@
+/* Tokens. `:root:root` (0,2,0) beats global.css's plain `:root` regardless of
+   load order. Names from global.css (--bg-row, --line, --surface-*, --icon-*)
+   are reused so its components pick up the theme. */
+:root:root {
+  color-scheme: light dark;
+
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --fs: 13px;
+  --fs-sm: 12px;
+  --radius: 6px;
+  --radius-sm: 4px;
+  --gap: 12px;
+  --gutter: 16px;
+  --max: 1400px;
+  --side-w: 260px;
+  --cell-y: 5px;
+  --cell-x: 8px;
+
+  --bg: light-dark(#f4f5f7, #14161a);
+  --bg-raised: light-dark(#ffffff, #1b1e23);
+  --bg-sunken: light-dark(#eceef1, #101215);
+  --bg-hover: light-dark(#e8ebef, #23272e);
+  --bg-head: light-dark(#e3e7ec, #242830);
+  --fg: light-dark(#1a1d21, #e6e8eb);
+  --fg-muted: light-dark(#555d68, #9ba2ac);
+  --line: light-dark(#d7dce2, #2c3138);
+  --line-strong: light-dark(#b9c0c9, #3f464f);
+
+  --link: light-dark(#34455c, #aab4c3);
+  --accent: light-dark(#506900, #c8e62f);
+  --accent-hover: light-dark(#3f5300, #dcf562);
+  --accent-fg: light-dark(#ffffff, #14161a);
+
+  --good: light-dark(#176b39, #4cc47e);
+  --bad: light-dark(#c4281c, #ff6b5e);
+  --warn: light-dark(#8f5d00, #f0b43c);
+  --info: light-dark(#1d5fc4, #6cb4ff);
+  --orange: light-dark(#a34109, #ff8a3d);
+  --good-bg: light-dark(#e2f3e8, #12301f);
+  --bad-bg: light-dark(#fbe7e5, #3a1713);
+  --warn-bg: light-dark(#fbf0d8, #352a0e);
+
+  --shadow-pop: 0 6px 18px light-dark(rgb(0 0 0 / .18), rgb(0 0 0 / .55));
+
+  /* global.css contract */
+  --bg-row: var(--bg-raised);
+  --shadow-panel: 0 1px 2px light-dark(rgb(0 0 0 / .08), rgb(0 0 0 / .4));
+  --surface-border: var(--line);
+  --surface-bg: var(--bg-raised);
+  --surface-shadow: var(--shadow-panel);
+  --table-border: var(--line);
+
+  --icon-red: var(--bad);
+  --icon-green: var(--good);
+  --icon-blue: var(--info);
+  --icon-orange: var(--orange);
+  --icon-yellow: var(--warn);
+  --icon-purple: light-dark(#7a35b0, #c08cf0);
+  --icon-teal: light-dark(#0e7a68, #3fd0b4);
+  --icon-pink: light-dark(#c42a7a, #ff7ab8);
+  --icon-grey: var(--fg-muted);
+  --icon-black: var(--fg);
+  --icon-white: light-dark(#14161a, #ffffff);
+  --icon-note: var(--info);
+  --icon-tip: var(--good);
+  --icon-important: light-dark(#7a35b0, #c08cf0);
+  --icon-warn: var(--warn);
+  --icon-caution: var(--bad);
+}

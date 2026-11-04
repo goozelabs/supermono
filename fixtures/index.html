@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>supermono fixtures</title>
+<style>
+  :root { color-scheme: light dark; font: 13px system-ui, sans-serif; }
+  body { margin: 0; display: grid; grid-template-rows: auto 1fr; height: 100vh; background: Canvas; color: CanvasText; }
+  header { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; padding: 8px 12px; border-bottom: 1px solid GrayText; }
+  label { display: flex; gap: 6px; align-items: center; }
+  main { overflow: auto; display: flex; justify-content: center; background: color-mix(in srgb, GrayText 15%, Canvas); }
+  iframe { border: 0; height: 100%; width: 100%; background: Canvas; }
+  #note { color: GrayText; }
+</style>
+</head>
+<body>
+<header>
+  <label>Page <select id="page"></select></label>
+  <label>Theme
+    <select id="theme">
+      <option value="btn">auto (OS)</option>
+      <option value="btn-dark">dark</option>
+      <option value="btn-light">light</option>
+    </select>
+  </label>
+  <label>Width
+    <select id="width">
+      <option value="">full</option>
+      <option value="760">760 (narrow, mouse)</option>
+      <option value="520">520 (phone forum/table reflow)</option>
+    </select>
+  </label>
+  <span id="note">Touch rules (zoom: 2, 16px inputs) need DevTools device mode.</span>
+</header>
+<main><iframe id="frame" title="Fixture"></iframe></main>
+<script>
+// Captures come from scripts/scrub.mjs; scripts/dev.mjs writes captured/index.json.
+const $ = (id) => document.getElementById(id);
+const store = {
+  get: (k) => { try { return localStorage.getItem('fx-' + k); } catch { return null; } },
+  set: (k, v) => { try { localStorage.setItem('fx-' + k, v); } catch {} },
+};
+
+function applyTheme() {
+  const doc = $('frame').contentDocument;
+  const link = doc && doc.querySelector('link[href*="dist/btn"]');
+  if (link) link.href = link.href.replace(/btn(-dark|-light)?\.css/, $('theme').value + '.css');
+}
+function applyWidth() {
+  $('frame').style.width = $('width').value ? $('width').value + 'px' : '100%';
+}
+
+(async () => {
+  let pages = [];
+  try { pages = (await (await fetch('captured/index.json')).json()).map((f) => 'captured/' + f); }
+  catch { $('note').textContent = 'No captures listed: run node scripts/dev.mjs and scrub some pages.'; }
+  for (const p of [...pages, 'touch.html']) $('page').add(new Option(p.replace(/^captured\/|\.html$/g, ''), p));
+
+  for (const id of ['page', 'theme', 'width']) {
+    const saved = store.get(id);
+    if (saved && [...$(id).options].some((o) => o.value === saved)) $(id).value = saved;
+    $(id).addEventListener('change', () => {
+      store.set(id, $(id).value);
+      if (id === 'page') $('frame').src = $('page').value;
+      if (id === 'theme') applyTheme();
+      if (id === 'width') applyWidth();
+    });
+  }
+  $('frame').addEventListener('load', applyTheme);
+  applyWidth();
+  $('frame').src = $('page').value;
+})();
+</script>
+</body>
+</html>

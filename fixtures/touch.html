@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- Same viewport meta BTN ships: phones lay out at 2x device width. -->
+<meta name="viewport" content="width=device-width, initial-scale=0.5, user-scalable=yes">
+<title>supermono touch fixture</title>
+<link rel="stylesheet" href="../dist/btn.css">
+</head>
+<body>
+<!-- Fixture markup mirrors docs/markup-skeleton.md. Hand-written, not captured from the site. -->
+<div id="wrapper">
+  <div id="header">
+    <div id="logo"><a href="#"></a></div>
+    <div id="userinfo">
+      <ul id="userinfo_stats"><li><span class="stat">Up: 1.2 TB</span></li><li><span class="stat">Ratio: <span class="r20">3.41</span></span></li></ul>
+      <ul id="userinfo_username"><li><a class="username permission_5" href="#">fixture_user</a></li></ul>
+      <ul id="userinfo_major"><li><strong><a href="#">Inbox</a></strong></li><li><strong><a href="#">Logout</a></strong></li></ul>
+    </div>
+    <div id="menu"><ul id="menu1" class="potato-menu potato-menu-group">
+      <li id="nav_index" class="potato-menu-item"><a href="#">Home</a></li>
+      <li id="nav_torrent" class="potato-menu-item"><a href="#">Torrents</a>
+        <ul class="potato-menu-group"><li class="potato-menu-item"><a href="#">Browse</a></li><li class="potato-menu-item"><a href="#">Upload</a></li></ul></li>
+      <li id="nav_community" class="potato-menu-item"><a href="#">Community</a></li>
+      <li id="nav_help" class="potato-menu-item"><a href="#">Help</a></li>
+      <li id="nav_user" class="potato-menu-item"><a href="#">Account</a></li>
+    </ul></div>
+    <div id="searchbars"><ul>
+      <li><form><input type="text" placeholder="Torrents"></form></li>
+      <li><form><input type="text" placeholder="Requests"></form></li>
+      <li><form><input type="text" placeholder="Forums"></form></li>
+    </ul></div>
+    <div id="alerts"><div class="alertbar"><a href="#">You have 1 unread message</a></div></div>
+  </div>
+  <div id="content">
+    <div class="thin home">
+      <div class="sidebar">
+        <div class="box"><div class="head colhead_dark"><strong>Stats</strong></div>
+          <ul class="stats nobullet"><li>Users: 12,345</li><li>Torrents: 678,901</li></ul></div>
+      </div>
+      <div class="main_column">
+        <div class="box"><div id="news_post"><div class="head"><strong>News</strong> <span>2026-11-01</span></div>
+          <div class="pad"><pre>Fixture news body that is long enough to wrap onto a second line at phone width so wrapping is visible.</pre></div></div></div>
+        <table id="torrent_table" class="torrent_table"><tbody>
+          <tr class="colhead"><td class="small"></td><td>Name</td><td class="number">Size</td><td class="sign">S</td></tr>
+          <tr class="torrent"><td class="center"></td>
+            <td><a href="#">Some Series</a> - <a href="#">S01E01</a><br>[MKV / H.264 / 1080p] [2026]
+              <div class="nobr"><b>Up:</b> <a class="permission_24" href="#">uploader</a> - <b>Added:</b> Just now</div>
+              <div class="nobr"><b>Release Name</b>: Some.Series.S01E01.1080p.WEB-DL.H264-GRP</div></td>
+            <td class="nobr number">1.5 GB</td><td class="number r09">12</td></tr>
+        </tbody></table>
+        <table id="post1" class="forum_post box vertical_margin forum_unread"><tbody>
+          <tr class="colhead_dark"><td colspan="2"><span><a class="permission_1" href="#">staff_member</a></span></td></tr>
+          <tr><td class="avatar"><img alt="" width="150" height="150" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Crect width='150' height='150' fill='%23888'/%3E%3C/svg%3E"><div class="user_details">Elite</div></td>
+            <td class="body"><div class="postcontent"><pre>Fixture forum post. On phone width the avatar should sit above or beside the text, not squeeze it.</pre></div></td></tr>
+        </tbody></table>
+        <form id="quickpostform"><textarea rows="4" placeholder="Reply"></textarea> <input type="submit" value="Post"></form>
+      </div>
+    </div>
+  </div>
+  <div id="footer"><p>Fixture footer</p></div>
+</div>
+</body>
+</html>
