@@ -60,9 +60,11 @@
 .user-info-bar__drop-down-menu a { display: block; padding: 5px 10px; border-radius: var(--radius-sm); }
 .user-info-bar__drop-down-menu a:hover { background: var(--bg-hover); text-decoration: none; }
 
-/* Logo: the image lives in the replaced theme; render the name as text. */
+/* Logo: the image lives in the replaced theme; render the site icon and the name as text. */
 .site-logo__link {
   display: inline-block;
+  padding-left: 40px;
+  background: url(https://passthepopcorn.me/static/common/touch-icon-iphone-retina.png) left center / 32px 32px no-repeat;
   color: var(--fg);
   font-size: 22px;
   font-weight: 700;
