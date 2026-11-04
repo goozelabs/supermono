@@ -27,10 +27,19 @@ const PTP_SECRETS = [
   [/(\/msg \S+ ENTER \S+ (?:<span\b[^>]*>)?)[^<\s]+/g, '$1REDACTED'],
 ];
 const PTP_LEFTOVER = /\b(?:authkey|torrent_pass|passkey|auth|anticsrftoken|irckey|apiuser|apikey)["']?\s*[=:]\s*["']?(?!REDACTED)[A-Za-z0-9]{8,}/i;
-// Safety net for secrets in plain text: a standalone 32-char token mixing upper, lower and
-// digits (PTP's IRC/API key form). data: URIs are skipped; base64 there is not a secret.
-const PTP_TOKEN = /(?<![A-Za-z0-9+/=_-])(?=[A-Za-z0-9]*[A-Z])(?=[A-Za-z0-9]*[a-z])(?=[A-Za-z0-9]*[0-9])[A-Za-z0-9]{32}(?![A-Za-z0-9+/=_-])/;
-const ptpLeftover = (html) => PTP_LEFTOVER.test(html) || PTP_TOKEN.test(html.replace(/data:[^"')\s]*/g, ''));
+// Safety net for secrets anywhere (text, scripts, unknown parameters): a standalone
+// 32-char token with letters and digits, either mixed-case (IRC/API key form) or lowercase
+// (passkey/anti-CSRF form; hex ones are already REDACTED). data: URIs are skipped; base64
+// there is not a secret.
+const PTP_TOKENS = [
+  /(?<![A-Za-z0-9+/_-])(?=[A-Za-z0-9]*[A-Z])(?=[A-Za-z0-9]*[a-z])(?=[A-Za-z0-9]*[0-9])[A-Za-z0-9]{32}(?![A-Za-z0-9+/=_-])/,
+  /(?<![A-Za-z0-9+/_-])(?=[a-z0-9]*[a-z])(?=[a-z0-9]*[0-9])[a-z0-9]{32}(?![A-Za-z0-9+/=_-])/,
+];
+const ptpLeftover = (html) => {
+  if (PTP_LEFTOVER.test(html)) return true;
+  const text = html.replace(/data:[^"')\s]*/g, '');
+  return PTP_TOKENS.some((re) => re.test(text));
+};
 
 const SECRET_PARAMS = /\b(authkey|torrent_pass|passkey|auth|token)=([^&"'\s<>]+)/gi;
 const HEX = /\b[0-9a-f]{24,}\b/gi; // IRC key, auth hashes

@@ -106,3 +106,9 @@ test('ptp irc key in usage span', () => {
   assert.ok(!html.includes(MIX32));
   assert.ok(html.includes('<span id="irckey_example">REDACTED</span>'));
 });
+test('lowercase passkey in plain text refused', () => {
+  assert.throws(() => ptp(`<td>Passkey</td><td>${KEY32}</td>`), /survived/);
+});
+test('mixed-case key after an unknown parameter refused', () => {
+  assert.throws(() => ptp(`<script>u="/x?k=${MIX32}"</script>`), /survived/);
+});
