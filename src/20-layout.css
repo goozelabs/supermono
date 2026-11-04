@@ -134,7 +134,7 @@ body #menu .potato-menu-item:focus-within > ul.potato-menu-group { visibility: v
 
 /* Legacy three-column helpers still referenced by global.css */
 body .mainbar, body .midbar { width: auto; margin: 0; }
-body .leftbar { width: auto; float: none; padding: 0; }
+body .leftbar { width: auto; padding: 0; }
 
 #footer { margin-top: var(--gap); padding: var(--gap) 0; color: var(--fg-muted); text-align: center; font-size: var(--fs-sm); }
 #footer p { margin: 0 0 4px; }
