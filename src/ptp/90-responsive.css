@@ -12,9 +12,11 @@
 }
 
 @media (max-width: 760px) and (pointer: fine), (pointer: coarse) and (max-device-width: 600px) {
-  #userinfo { flex-direction: column; }
+  /* Header: one item per row, logo after the user links */
+  #header > *, #userinfo > * { flex-basis: 100%; }
   #userinfo::after { display: none; }
   #userinfo > :is(#userinfo_minor, #userinfo_username) { margin-left: 0; justify-content: flex-start; }
+  .site-logo { order: 6; } /* after major (5); ties with the menu, which follows in source */
   .search-bar__search-field { flex-basis: 110px; }
 
   .thin:has(> .main-column) { grid-template-columns: minmax(0, 1fr); }
