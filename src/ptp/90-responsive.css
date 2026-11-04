@@ -10,9 +10,11 @@
    --z carries the zoom for the form-field rule below. */
 @media (pointer: coarse) and (max-device-width: 600px) {
   html { zoom: 2; --z: 2; }
-  /* iOS Safari sizes text as text-size-adjust / zoom, so the adjust must match the zoom:
-     100% renders text at 1/zoom, `auto` autosizes it unevenly. Feature query = iOS only. */
-  @supports (-webkit-touch-callout: none) { html { -webkit-text-size-adjust: 200%; } }
+  /* Text sizing on iOS: 10-base.css sets -webkit-text-size-adjust: 100% (build.sh targets
+     iOS Safari so the prefix survives), which stops iOS autosizing text unevenly. Don't
+     raise it to match the zoom: the iOS 26.3 simulator divides text by zoom, real iPhones
+     don't, and 200% rendered text 2x too big on a device. */
+ 
   button, input[type=submit], input[type=button] { min-height: 28px; }
   /* iOS zooms into a focused field unless font-size x page scale >= 16, and it ignores CSS
      zoom; PTP's page scale is about 1/zoom. So fields get font-size 16px x zoom and their own
@@ -31,15 +33,15 @@
     background-size: calc(5px * var(--z)) calc(5px * var(--z));
   }
 }
-@media (pointer: coarse) and (orientation: portrait) and (max-device-width: 340px) { html { zoom: 3.07; --z: 3.07; } @supports (-webkit-touch-callout: none) { html { -webkit-text-size-adjust: 307%; } } }  /* 320 */
-@media (pointer: coarse) and (orientation: portrait) and (min-device-width: 341px) and (max-device-width: 375px) { html { zoom: 2.62; --z: 2.62; } @supports (-webkit-touch-callout: none) { html { -webkit-text-size-adjust: 262%; } } }  /* 375 */
-@media (pointer: coarse) and (orientation: portrait) and (min-device-width: 376px) and (max-device-width: 390px) { html { zoom: 2.52; --z: 2.52; } @supports (-webkit-touch-callout: none) { html { -webkit-text-size-adjust: 252%; } } }  /* 390 */
-@media (pointer: coarse) and (orientation: portrait) and (min-device-width: 391px) and (max-device-width: 393px) { html { zoom: 2.5; --z: 2.5; } @supports (-webkit-touch-callout: none) { html { -webkit-text-size-adjust: 250%; } } }  /* 393 */
-@media (pointer: coarse) and (orientation: portrait) and (min-device-width: 394px) and (max-device-width: 402px) { html { zoom: 2.44; --z: 2.44; } @supports (-webkit-touch-callout: none) { html { -webkit-text-size-adjust: 244%; } } }  /* 402 */
-@media (pointer: coarse) and (orientation: portrait) and (min-device-width: 403px) and (max-device-width: 414px) { html { zoom: 2.37; --z: 2.37; } @supports (-webkit-touch-callout: none) { html { -webkit-text-size-adjust: 237%; } } }  /* 414 */
-@media (pointer: coarse) and (orientation: portrait) and (min-device-width: 415px) and (max-device-width: 428px) { html { zoom: 2.29; --z: 2.29; } @supports (-webkit-touch-callout: none) { html { -webkit-text-size-adjust: 229%; } } }  /* 428 */
-@media (pointer: coarse) and (orientation: portrait) and (min-device-width: 429px) and (max-device-width: 430px) { html { zoom: 2.28; --z: 2.28; } @supports (-webkit-touch-callout: none) { html { -webkit-text-size-adjust: 228%; } } }  /* 430 */
-@media (pointer: coarse) and (orientation: portrait) and (min-device-width: 431px) and (max-device-width: 600px) { html { zoom: 2.23; --z: 2.23; } @supports (-webkit-touch-callout: none) { html { -webkit-text-size-adjust: 223%; } } }  /* 440 */
+@media (pointer: coarse) and (orientation: portrait) and (max-device-width: 340px) { html { zoom: 3.07; --z: 3.07; } }  /* 320 */
+@media (pointer: coarse) and (orientation: portrait) and (min-device-width: 341px) and (max-device-width: 375px) { html { zoom: 2.62; --z: 2.62; } }  /* 375 */
+@media (pointer: coarse) and (orientation: portrait) and (min-device-width: 376px) and (max-device-width: 390px) { html { zoom: 2.52; --z: 2.52; } }  /* 390 */
+@media (pointer: coarse) and (orientation: portrait) and (min-device-width: 391px) and (max-device-width: 393px) { html { zoom: 2.5; --z: 2.5; } }  /* 393 */
+@media (pointer: coarse) and (orientation: portrait) and (min-device-width: 394px) and (max-device-width: 402px) { html { zoom: 2.44; --z: 2.44; } }  /* 402 */
+@media (pointer: coarse) and (orientation: portrait) and (min-device-width: 403px) and (max-device-width: 414px) { html { zoom: 2.37; --z: 2.37; } }  /* 414 */
+@media (pointer: coarse) and (orientation: portrait) and (min-device-width: 415px) and (max-device-width: 428px) { html { zoom: 2.29; --z: 2.29; } }  /* 428 */
+@media (pointer: coarse) and (orientation: portrait) and (min-device-width: 429px) and (max-device-width: 430px) { html { zoom: 2.28; --z: 2.28; } }  /* 430 */
+@media (pointer: coarse) and (orientation: portrait) and (min-device-width: 431px) and (max-device-width: 600px) { html { zoom: 2.23; --z: 2.23; } }  /* 440 */
 
 @media (max-width: 760px) and (pointer: fine), (pointer: coarse) and (max-device-width: 600px) {
   /* Header, matching BTN's: stats strip on top with the Bonus link (its total) pinned at

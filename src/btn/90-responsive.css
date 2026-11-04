@@ -6,9 +6,11 @@
    (a phone; tablets lay out at ~1600px and keep the desktop layout, zoomed). */
 @media (pointer: coarse) {
   html { zoom: 2; }
-  /* iOS Safari sizes text as text-size-adjust / zoom, so the adjust must match the zoom:
-     100% renders text at 1/zoom, `auto` autosizes it unevenly. Feature query = iOS only. */
-  @supports (-webkit-touch-callout: none) { html { -webkit-text-size-adjust: 200%; } }
+  /* Text sizing on iOS: 10-base.css sets -webkit-text-size-adjust: 100% (build.sh targets
+     iOS Safari so the prefix survives), which stops iOS autosizing text unevenly. Don't
+     raise it to match the zoom: the iOS 26.3 simulator divides text by zoom, real iPhones
+     don't, and 200% rendered text 2x too big on a device. */
+ 
   button, .button, input[type=submit], input[type=button] { min-height: 28px; }
   /* iOS zooms into a focused field unless font-size x page scale >= 16, and it ignores CSS
      zoom; BTN's page scale is 0.5. So fields get font-size 32px and their own zoom of 0.5:
