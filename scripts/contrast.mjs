@@ -1,14 +1,15 @@
 #!/usr/bin/env node
 // WCAG AA check (4.5:1) for every text colour against every surface it can sit on,
-// in both schemes. Reads `--token: light-dark(a, b)` from src/00-tokens.css and
-// inline `color: light-dark(a, b)` rules from src/50-classes.css.
-import { readFileSync } from 'node:fs';
+// in both schemes. Reads `--token: light-dark(a, b)` from src/shared/00-tokens.css and,
+// per tracker, inline `color: light-dark(a, b)` rules from src/<tracker>/50-classes.css.
+import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
 const src = join(dirname(fileURLToPath(import.meta.url)), '..', 'src');
-const tokens = readFileSync(join(src, '00-tokens.css'), 'utf8');
-const classes = readFileSync(join(src, '50-classes.css'), 'utf8');
+const tokens = readFileSync(join(src, 'shared', '00-tokens.css'), 'utf8');
+const trackers = readdirSync(src, { withFileTypes: true })
+  .filter((d) => d.isDirectory() && d.name !== 'shared').map((d) => d.name).sort();
 
 const HEX = '#[0-9a-fA-F]{3,8}';
 const pair = new RegExp(`light-dark\\(\\s*(${HEX})\\s*,\\s*(${HEX})\\s*\\)`);
@@ -53,19 +54,30 @@ for (const i of [0, 1]) {
   checks.push(['tag text (opacity .8)', ['light', 'dark'][i],
     mix(T.link[i], T['bg-raised'][i], 0.8), mix(T['bg-sunken'][i], T['bg-raised'][i], 0.8)]);
 }
-// Class colours: each rule block's light-dark() colour on every surface a name or value can sit on
-// (rows, group cells, blockquotes, unread-PM rows).
-for (const [, sel, a, b] of classes.matchAll(new RegExp(`([^{}]+)\\{[^}]*?color:\\s*light-dark\\(\\s*(${HEX})\\s*,\\s*(${HEX})\\s*\\)`, 'g'))) {
-  const label = sel.trim().replace(/\s+/g, ' ').split(',')[0].replace(/^body /, '');
-  for (const s of [...SURFACES, 'warn-bg']) {
-    checks.push([`${label} on --${s}`, 'light', a, T[s][0]]);
-    checks.push([`${label} on --${s}`, 'dark', b, T[s][1]]);
+const groups = { shared: checks };
+
+// Class colours, per tracker: each rule block's light-dark() colour on every surface a name or
+// value can sit on (rows, group cells, blockquotes, unread-PM rows).
+for (const t of trackers) {
+  const file = join(src, t, '50-classes.css');
+  const classes = existsSync(file) ? readFileSync(file, 'utf8') : '';
+  const own = groups[t] = [];
+  for (const [, sel, a, b] of classes.matchAll(new RegExp(`([^{}]+)\\{[^}]*?color:\\s*light-dark\\(\\s*(${HEX})\\s*,\\s*(${HEX})\\s*\\)`, 'g'))) {
+    const label = sel.trim().replace(/\s+/g, ' ').split(',')[0].replace(/^body /, '');
+    for (const s of [...SURFACES, 'warn-bg']) {
+      own.push([`${label} on --${s}`, 'light', a, T[s][0]]);
+      own.push([`${label} on --${s}`, 'dark', b, T[s][1]]);
+    }
   }
 }
 
-const fails = checks.filter(([, , fg, bg]) => ratio(fg, bg) < 4.5);
-for (const [label, scheme, fg, bg] of fails) {
-  console.log(`FAIL ${scheme.padEnd(5)} ${ratio(fg, bg).toFixed(2)}  ${label}  (${fg} on ${bg})`);
+let failed = 0;
+for (const [group, list] of Object.entries(groups)) {
+  const fails = list.filter(([, , fg, bg]) => ratio(fg, bg) < 4.5);
+  for (const [label, scheme, fg, bg] of fails) {
+    console.log(`[${group}] FAIL ${scheme.padEnd(5)} ${ratio(fg, bg).toFixed(2)}  ${label}  (${fg} on ${bg})`);
+  }
+  console.log(`[${group}] ${list.length - fails.length}/${list.length} pairs pass AA 4.5:1`);
+  failed += fails.length;
 }
-console.log(`${checks.length - fails.length}/${checks.length} pairs pass AA 4.5:1`);
-process.exit(fails.length ? 1 : 0);
+process.exit(failed ? 1 : 0);
