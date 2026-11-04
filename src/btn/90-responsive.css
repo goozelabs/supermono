@@ -25,9 +25,80 @@
   table.forum_post, table.forum_post > tbody, table.forum_post tr, table.forum_post td { display: block; width: auto; }
   table.forum_post td.avatar { display: flex; align-items: center; gap: 10px; padding: 8px 12px; text-align: left; }
   td.avatar img { max-width: 56px; }
-  /* Each tbody becomes its own table, so skip multi-tbody tables (series
-     discog) whose header and rows are in separate tbodies. */
-  .torrent_table:not(:has(> tbody + tbody)) { display: block; overflow-x: auto; }
-  .torrent_table:not(:has(> tbody + tbody)) > tbody { display: table; width: 100%; }
-  .torrent_table tr.torrent > td:nth-child(3) > div.nobr { white-space: normal; overflow-wrap: anywhere; }
+  /* Torrent lists (browse, snatchlist, series): each row is one stacked block, not columns.
+     Browse rows: banner, then the title cell (Download floats right), flags, and a stats
+     line (size, snatched, seeders, leechers) with Report at its right end. Series rows: the
+     episode cell becomes a sub-header; each torrent is format line + stats line. Rows are
+     flex, so `.hide`/inline display from the site's toggles must still win (`:not(.hide)`). */
+  .torrent_table:has(tr.torrent, tr.group_torrent), .torrent_table:has(tr.torrent, tr.group_torrent) > tbody { display: block; }
+  .torrent_table > tbody > tr:is(.torrent, .group_torrent, .colhead, .colhead_dark):not(.hide) {
+    display: flex; flex-wrap: wrap; align-items: center; column-gap: 12px;
+    position: relative; padding: 10px 12px; border-top: 1px solid var(--line);
+  }
+  .torrent_table > tbody:first-child > tr:first-child { border-top: 0; }
+  .torrent_table > tbody > tr:is(.torrent, .group_torrent, .colhead, .colhead_dark) > td { display: block; width: auto; padding: 0; border: 0; }
+  table#discog_table td.number { width: auto; } /* beats the desktop `width: 1%` (id) */
+
+  /* Header rows: browse keeps its sort links as a wrapping bar; series keeps "Season N (hide)" */
+  .torrent_table > tbody > tr.colhead:not(.hide) { gap: 4px 16px; padding-block: 6px; font-size: var(--fs-sm); }
+  .torrent_table tr.colhead > td:not(:has(a)), .torrent_table tr.colhead_dark > td:not(:first-child) { display: none; }
+  .torrent_table tr.colhead img { width: 14px; height: 14px; }
+
+  /* Browse: banner strip on top, category icon as a badge on its corner */
+  .torrent_table tr.torrent > td:nth-child(2) { flex-basis: 100%; margin-bottom: 8px; }
+  .torrent_table tr.torrent > td:nth-child(2) img { display: block; width: 170px; height: 40px; max-width: 100%; object-fit: cover; border-radius: var(--radius-sm); }
+  .torrent_table tr.torrent > td:first-child { position: absolute; top: 14px; left: 16px; z-index: 1; }
+  .torrent_table tr.torrent > td:first-child img { display: block; width: 20px; height: 20px; }
+  .torrent_table tr.torrent > td:nth-child(3) { flex: 1 1 100%; min-width: 0; font-size: 12.5px; overflow-wrap: anywhere; }
+  .torrent_table tr.torrent > td:nth-child(3) > a { font-size: 14px; font-weight: 600; }
+  .torrent_table tr.torrent > td:nth-child(3) > div.nobr { white-space: normal; }
+  .torrent_table tr.torrent > td:nth-child(3) > div.nobr > span[title] { font: 11px/1.35 var(--mono); }
+  /* flags (2x / Fast / AutoUp) on their own line, if any */
+  .torrent_table tr.torrent > td:nth-child(4) { flex-basis: 100%; display: flex; gap: 6px; margin-top: 4px; }
+  .torrent_table tr.torrent > td:nth-child(4):not(:has(img)), .torrent_table tr.torrent > td:nth-child(4) > br { display: none; }
+
+  /* Series: episode cell (rowspan) becomes a full-width sub-header in its first row */
+  .torrent_table tr.group_torrent > td.group {
+    flex: 0 0 calc(100% + 24px); margin: -10px -12px 8px; padding: 5px 12px;
+    background: var(--bg-sunken); border-bottom: 1px solid var(--line);
+  }
+  .torrent_table tr.group_torrent > td.group strong { display: flex; align-items: baseline; gap: 8px; }
+  .torrent_table tr.group_torrent > td.group .year { float: none; order: 1; font-weight: 400; }
+  .torrent_table tr.group_torrent > td:not(.group, .number) { flex: 1 1 100%; min-width: 0; overflow-wrap: anywhere; }
+
+  /* Stats line: last four cells. `content: x / alt` keeps the glyphs out of screen readers. */
+  .torrent_table tr:is(.torrent, .group_torrent) > td:nth-last-child(-n+4) {
+    flex: 0 0 max-content; /* ignore any inline cell width */
+    width: auto; margin-top: 6px; font-size: var(--fs-sm); color: var(--fg-muted);
+    white-space: nowrap; text-align: left; font-variant-numeric: tabular-nums;
+  }
+  .torrent_table tr:is(.torrent, .group_torrent) > td:nth-last-child(4) { color: var(--fg); font-weight: 600; }
+  .torrent_table tr:is(.torrent, .group_torrent) > td:nth-last-child(3)::before { content: "✓\00a0" / "Snatched "; }
+  .torrent_table tr:is(.torrent, .group_torrent) > td:nth-last-child(2) { color: var(--good); }
+  .torrent_table tr:is(.torrent, .group_torrent) > td:nth-last-child(2)::before { content: "▲\00a0" / "Seeders "; }
+  .torrent_table tr:is(.torrent, .group_torrent) > td:nth-last-child(1) { color: var(--warn); }
+  .torrent_table tr:is(.torrent, .group_torrent) > td:nth-last-child(1)::before { content: "▼\00a0" / "Leechers "; }
+
+  /* Download: a glyph button top-right. Report: an icon chip at the stats line's right end,
+     away from Download. The site's icons (browse) and "[DL]" text (series) are hidden. */
+  .torrent_table tr:is(.torrent, .group_torrent) > td > span:has(> a[title=Download]) { float: right; margin: 0 0 4px 10px; font-size: 0; }
+  .torrent_table tr:is(.torrent, .group_torrent) a:is([title=Download], [title=Report]) { display: grid; place-items: center; font-size: 0; }
+  .torrent_table tr:is(.torrent, .group_torrent) a:is([title=Download], [title=Report]) > img { display: none; }
+  .torrent_table tr:is(.torrent, .group_torrent) a[title=Download] {
+    width: 38px; height: 34px; border-radius: 7px; color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  }
+  .torrent_table tr:is(.torrent, .group_torrent) a[title=Download]::before { content: "↓" / "Download"; font: 700 16px/1 var(--font); }
+  .torrent_table tr:is(.torrent, .group_torrent) a[title=Report] {
+    position: absolute; right: 12px; bottom: 10px; width: 30px; height: 30px;
+    border: 1px solid var(--line); border-radius: 6px; color: var(--fg-muted);
+  }
+  .torrent_table tr:is(.torrent, .group_torrent) a[title=Report]::before { content: "⚑" / "Report"; font-size: 14px; }
+  .torrent_table tr:is(.torrent, .group_torrent):has(a[title=Report])::after { content: ""; width: 30px; height: 30px; margin: 6px 0 0 auto; }
+
+  /* Your torrents: a bar on the row's left edge in the link's status colour */
+  .torrent_table tr:has(a.tor_highlight_seed) { box-shadow: inset 3px 0 0 var(--warn); }
+  .torrent_table tr:has(a.tor_highlight_leech) { box-shadow: inset 3px 0 0 var(--good); }
+  .torrent_table tr:has(a.tor_highlight_snatch) { box-shadow: inset 3px 0 0 var(--bad); }
 }

@@ -36,8 +36,91 @@
   .forum-post__avatar-and-body { flex-direction: column; }
   .forum-post__avatar { display: flex; align-items: center; gap: 10px; padding: 8px 12px 0; text-align: left; }
   .forum-post__avatar__image { max-width: 56px; }
-  /* Wide torrent and request tables scroll sideways instead of squashing */
-  /* :where keeps the id at zero specificity so `html .hidden` still hides list tables */
-  :where(.torrent_table, #request_table) { display: block; overflow-x: auto; }
-  .basic-movie-list__torrent-row .torrent-info-link { white-space: normal; overflow-wrap: anywhere; }
+  /* Wide request table scrolls sideways instead of squashing */
+  /* :where keeps the id at zero specificity so `html .hidden` still hides it */
+  :where(#request_table) { display: block; overflow-x: auto; }
+
+  /* Torrent lists (browse list view, movie page): each row is one stacked block, not
+     columns, matching BTN's. Movie rows: cover at left, title lines, stats line (size,
+     snatched, seeders, leechers, time) with Bookmark at its right end. Torrent rows: release
+     line (Download floats right), stats line with Report / Permalink at its right end.
+     Edition rows are sub-headers. `:not(.hidden)` leaves the site's toggles in charge. */
+  :is(.basic-movie-list, .movie-page__torrent-table):not(.hidden),
+  :is(.basic-movie-list, .movie-page__torrent-table) > :is(thead, tbody):not(.hidden) { display: block; }
+  :is(.basic-movie-list, .movie-page__torrent-table) > :is(thead, tbody) > tr:not(.hidden) {
+    display: flex; flex-wrap: wrap; align-items: center; column-gap: 12px;
+    position: relative; padding: 10px 12px; border-top: 1px solid var(--line);
+  }
+  :is(.basic-movie-list, .movie-page__torrent-table) > :first-child > tr:first-child { border-top: 0; }
+  :is(.basic-movie-list, .movie-page__torrent-table) > :is(thead, tbody) > tr:not(.hidden) > :is(td, th) { display: block; width: auto; padding: 0; border: 0; }
+  .movie-page__torrent-table tr.torrent_info_row > td { flex: 1 1 100%; min-width: 0; overflow-wrap: anywhere; }
+
+  /* Header: browse keeps its sort links as a wrapping bar; the movie page's has none */
+  .basic-movie-list > thead > tr:not(.hidden) { gap: 4px 16px; padding-block: 6px; font-size: var(--fs-sm); }
+  .basic-movie-list > thead > tr:not(.hidden) > th:not(:has(a)), .movie-page__torrent-table > thead:not(.hidden) { display: none; }
+  .basic-movie-list > thead img { width: 12px; height: 12px; }
+
+  /* Edition rows ("Feature Film - High Definition") */
+  :is(.basic-movie-list, .movie-page__torrent-table) > tbody > tr:not(.hidden):has(> .basic-movie-list__torrent-edition) { padding: 0; }
+  :is(.basic-movie-list, .movie-page__torrent-table) > tbody > tr:not(.hidden) > td.basic-movie-list__torrent-edition { flex: 1; padding: 5px 12px; }
+
+  /* Movie row: cover pinned left; everything else flows beside it */
+  .basic-movie-list > tbody > tr.basic-movie-list__details-row:not(.hidden) { min-height: 80px; padding-left: 62px; }
+  .basic-movie-list__details-row > td:first-child { position: absolute; top: 10px; left: 12px; }
+  .basic-movie-list__details-row .basic-movie-list__movie__cover { width: 40px; }
+  .basic-movie-list__details-row > td:nth-child(2) { flex: 1 1 100%; min-width: 0; overflow-wrap: anywhere; }
+  .basic-movie-list__movie__title { font-size: 14px; }
+
+  /* Torrent rows: release line full width */
+  :is(.basic-movie-list__torrent-row, .group_torrent_header) > td:first-child:not(.basic-movie-list__torrent-edition) { flex: 1 1 100%; min-width: 0; overflow-wrap: anywhere; }
+  :is(.basic-movie-list__torrent-row, .group_torrent_header) .torrent-info-link { white-space: normal; }
+
+  /* Stats line: size, snatched, seeders, leechers, then time (list view). `content: x / alt`
+     keeps the glyphs out of screen readers. */
+  :is(.basic-movie-list__details-row, .basic-movie-list__torrent-row, .group_torrent_header) > td:nth-last-child(-n+4),
+  .basic-movie-list tr > td.nobr:nth-last-child(5) {
+    flex: 0 0 max-content; /* the site sets inline cell widths */
+    margin-top: 6px; font-size: var(--fs-sm); color: var(--fg-muted);
+    white-space: nowrap; text-align: left; font-variant-numeric: tabular-nums;
+  }
+  .basic-movie-list tr > td.nobr:nth-last-child(5) { order: 1; }
+  :is(.basic-movie-list__details-row, .basic-movie-list__torrent-row, .group_torrent_header) > td:nth-last-child(4) { color: var(--fg); font-weight: 600; }
+  :is(.basic-movie-list__details-row, .basic-movie-list__torrent-row, .group_torrent_header) > td:nth-last-child(3)::before { content: "✓\00a0" / "Snatched "; }
+  :is(.basic-movie-list__details-row, .basic-movie-list__torrent-row, .group_torrent_header) > td:nth-last-child(2) { color: var(--good); }
+  :is(.basic-movie-list__details-row, .basic-movie-list__torrent-row, .group_torrent_header) > td.no-seeders { color: var(--bad); }
+  :is(.basic-movie-list__details-row, .basic-movie-list__torrent-row, .group_torrent_header) > td:nth-last-child(2)::before { content: "▲\00a0" / "Seeders "; }
+  :is(.basic-movie-list__details-row, .basic-movie-list__torrent-row, .group_torrent_header) > td:nth-last-child(1) { color: var(--warn); }
+  :is(.basic-movie-list__details-row, .basic-movie-list__torrent-row, .group_torrent_header) > td:nth-last-child(1)::before { content: "▼\00a0" / "Leechers "; }
+
+  /* Download: a glyph button top-right. Report / Permalink / Bookmark: icon chips at the
+     stats line's right end, away from Download. Bracket and pipe text is hidden. */
+  .basic-movie-list__torrent__action { float: right; margin: 0 0 4px 10px; font-size: 0; }
+  :is(.basic-movie-list, .movie-page__torrent-table) a:is([title=Download], [title=Report], [title=Permalink]),
+  .basic-movie-list__movie__bookmark > a { display: grid; place-items: center; font-size: 0; }
+  :is(.basic-movie-list, .movie-page__torrent-table) a:is([title=Download], [title=Report], [title=Permalink]) > img { display: none; }
+  :is(.basic-movie-list, .movie-page__torrent-table) a[title=Download] {
+    width: 38px; height: 34px; border-radius: 7px; color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  }
+  :is(.basic-movie-list, .movie-page__torrent-table) a[title=Download]::before { content: "↓" / "Download"; font: 700 16px/1 var(--font); }
+  :is(.basic-movie-list, .movie-page__torrent-table) a:is([title=Report], [title=Permalink]),
+  .basic-movie-list__movie__bookmark > a {
+    position: absolute; right: 12px; bottom: 10px; width: 30px; height: 30px;
+    border: 1px solid var(--line); border-radius: 6px; color: var(--fg-muted);
+  }
+  :is(.basic-movie-list, .movie-page__torrent-table) a[title=Report]:has(~ a[title=Permalink]) { right: 50px; }
+  :is(.basic-movie-list, .movie-page__torrent-table) a[title=Report]::before { content: "⚑" / "Report"; font-size: 14px; }
+  :is(.basic-movie-list, .movie-page__torrent-table) a[title=Permalink]::before { content: "#" / "Permalink"; font-size: 14px; }
+  .basic-movie-list__movie__bookmark > a::before { content: "☆" / "Bookmark"; font-size: 14px; }
+  :is(.basic-movie-list, .movie-page__torrent-table) tr:has(a[title=Report], .basic-movie-list__movie__bookmark)::after {
+    content: ""; order: 2; width: 30px; height: 30px; margin: 6px 0 0 auto;
+  }
+  :is(.basic-movie-list, .movie-page__torrent-table) tr:has(a[title=Permalink])::after { width: 68px; }
+
+  /* Your torrents: a bar on the row's left edge in the link's status colour */
+  :is(.basic-movie-list, .movie-page__torrent-table) tr:has(.torrent-info-link--user-seeding) { box-shadow: inset 3px 0 0 var(--good); }
+  :is(.basic-movie-list, .movie-page__torrent-table) tr:has(.torrent-info-link--user-leeching) { box-shadow: inset 3px 0 0 var(--warn); }
+  :is(.basic-movie-list, .movie-page__torrent-table) tr:has(.torrent-info-link--user-snatched) { box-shadow: inset 3px 0 0 var(--info); }
+  :is(.basic-movie-list, .movie-page__torrent-table) tr:has(.torrent-info-link--user-downloaded) { box-shadow: inset 3px 0 0 var(--orange); }
 }
