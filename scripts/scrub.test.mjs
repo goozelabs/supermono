@@ -93,3 +93,16 @@ test('ptp api user and key in curl text', () => hides(
 test('leftover in inline script refused', () => {
   assert.throws(() => ptp(`<script>var authkey = "${KEY32}";</script>`), /survived/);
 });
+test('ptp irc key in usage text', () => hides(
+  `<p>Usage: /msg Hummingbird ENTER someuser ${MIX32} #channel-name</p>`, MIX32));
+test('unknown mixed-case 32-char token refused', () => {
+  assert.throws(() => ptp(`<p>key is ${MIX32} here</p>`), /survived/);
+});
+test('data uri content is not a token', () => {
+  assert.doesNotThrow(() => ptp(`<img src="data:image/png;base64,${MIX32}${MIX32}">`));
+});
+test('ptp irc key in usage span', () => {
+  const html = ptp(`<code>/msg Hummingbird ENTER someuser <span id="irckey_example">${MIX32}</span> #channel-name</code>`);
+  assert.ok(!html.includes(MIX32));
+  assert.ok(html.includes('<span id="irckey_example">REDACTED</span>'));
+});

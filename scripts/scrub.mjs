@@ -22,8 +22,15 @@ const PTP_SECRETS = [
   [/\/[A-Za-z0-9]{32}\/announce/g, '/REDACTED/announce'],
   [/(Api(?:User|Key):<\/label>[\s\S]{0,200}?<input\b[^>]*\bvalue=")[^"]*"/g, '$1REDACTED"'],
   [/\b(Api(?:User|Key)):\s*[A-Za-z0-9]+/g, '$1: REDACTED'],
+  // IRC login example on the security page: /msg <bot> ENTER <user> <irc key> #channel,
+  // the key optionally wrapped in <span id="irckey_example">
+  [/(\/msg \S+ ENTER \S+ (?:<span\b[^>]*>)?)[^<\s]+/g, '$1REDACTED'],
 ];
 const PTP_LEFTOVER = /\b(?:authkey|torrent_pass|passkey|auth|anticsrftoken|irckey|apiuser|apikey)["']?\s*[=:]\s*["']?(?!REDACTED)[A-Za-z0-9]{8,}/i;
+// Safety net for secrets in plain text: a standalone 32-char token mixing upper, lower and
+// digits (PTP's IRC/API key form). data: URIs are skipped; base64 there is not a secret.
+const PTP_TOKEN = /(?<![A-Za-z0-9+/=_-])(?=[A-Za-z0-9]*[A-Z])(?=[A-Za-z0-9]*[a-z])(?=[A-Za-z0-9]*[0-9])[A-Za-z0-9]{32}(?![A-Za-z0-9+/=_-])/;
+const ptpLeftover = (html) => PTP_LEFTOVER.test(html) || PTP_TOKEN.test(html.replace(/data:[^"')\s]*/g, ''));
 
 const SECRET_PARAMS = /\b(authkey|torrent_pass|passkey|auth|token)=([^&"'\s<>]+)/gi;
 const HEX = /\b[0-9a-f]{24,}\b/gi; // IRC key, auth hashes
@@ -109,7 +116,7 @@ export function scrub(html) {
   const charset = html.match(/<meta charset[^>]*>/i);
   html = charset ? html.replace(charset[0], charset[0] + link) : html.replace(/<head[^>]*>/i, (h) => h + link);
 
-  if (LEFTOVER.test(html) || (tracker === 'ptp' && PTP_LEFTOVER.test(html))) {
+  if (LEFTOVER.test(html) || (tracker === 'ptp' && ptpLeftover(html))) {
     throw new Error('secret parameter survived scrubbing');
   }
   return { tracker, html };
