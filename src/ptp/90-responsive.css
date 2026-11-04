@@ -27,6 +27,7 @@
 
   .forum-post__avatar { flex-basis: 90px; }
   .cover-movie-list { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+  #top10 .cover-movie-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 520px) and (pointer: fine), (pointer: coarse) and (max-device-width: 600px) {

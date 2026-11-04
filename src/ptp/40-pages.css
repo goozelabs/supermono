@@ -86,3 +86,6 @@ td[class^="forum-topic--is-read"]::before { content: "○"; color: var(--fg-mute
 td[class^="forum-topic--"][class*="-sticky"]::after { content: " 📌"; font-size: .85em; }
 td[class^="forum-topic--"][class*="-locked"]:not([class*="-sticky"])::after { content: " 🔒"; font-size: .85em; }
 .forum_list .last_topic, .forum_list .last_poster { display: block; }
+
+/* Top 10: lists come in tens, so rows split evenly: 5x2 here, 2x5 when narrow */
+#top10 .cover-movie-list { grid-template-columns: repeat(5, minmax(0, 1fr)); }
